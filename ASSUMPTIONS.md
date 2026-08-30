@@ -7,13 +7,23 @@
 - The ring is equatorial and the stream is prograde.
 - Nodes are fixed in the Earth-rotating frame and are point targets in L1.
 - Rotor-element mass does not affect its ballistic path.
-- A node changes velocity impulsively for trajectory reporting; guide length
-  then maps that turn to a constant allowed lateral-acceleration abstraction.
+- A node changes velocity impulsively for ballistic trajectory reporting. The
+  guide estimate maps that transition to constant normal acceleration and
+  integrates relative speed in the Earth-fixed guide frame.
+- Inertial velocity rotates at constant magnitude and angular rate through the
+  ideal guide interaction.
+- Guide inertial velocity is held constant during each short interaction;
+  Earth rotation of the local frame and gravity during that finite interaction
+  are omitted.
 - The moving stream is uniformly phased. Population and passage-frequency
   values are means and can be fractional expected occupancies.
 - The prescribed geocentric speed is the speed immediately after every node.
-- For bypass transfers, phases are assumed distributed so the reported
-  passage rate is the uniform average at every node.
+- Homogeneous-stride rotor scaling applies only when the entire regular stream
+  actually uses that stride.
+- A failed-node route maps each active node to the next active node. Its local
+  bypass leg is not used to redefine the whole ring as stride 2 or 3.
+- The static failure-route period is the sum of its modeled leg flight times;
+  transient rerouting, rephasing, and control are omitted.
 
 ## Explicitly omitted physics
 
@@ -33,7 +43,7 @@
 
 ## Interpretation limits
 
-L0 guide lengths are large-node-count scaling estimates. Applying them to a
+L0 Earth-fixed physical guide lengths are large-node-count scaling estimates. Applying them to a
 small number of nodes is useful only as a comparison scale. L1 provides a
 ballistic point-intercept and node velocity discontinuity; it does not prove
 that a finite guide can occupy that location without intersecting Earth or
@@ -43,4 +53,3 @@ a magnet-design result.
 An Earth intersection flag does not stop mathematical propagation. Such a
 result is infeasible under the model and must not be interpreted as a physical
 trajectory.
-

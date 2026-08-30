@@ -28,7 +28,7 @@ magnetic:
 safety:
   minimum_safe_altitude: 100 km
 transfer:
-  skip_nodes: 1
+  node_stride: 1
 model:
   fidelity: L0
 """,
@@ -55,4 +55,6 @@ dimensions:
     assert len(pd.read_parquet(output / "sweep_results.parquet")) == 3
     manifest = json.loads((output / "sweep_manifest.json").read_text(encoding="utf-8"))
     assert manifest["generated_design_points"] == 3
-
+    assert manifest["source_commit"]
+    assert manifest["artifact_commit"] is None
+    assert manifest["numerical_integrator"].endswith("DOP853")

@@ -3,11 +3,14 @@
 This repository is the initial traceable Python kernel for a polygonal,
 discontinuous equatorial Earth orbital ring. It implements only:
 
-- **L0** closed-form orbital and magnetic turning/guide-length scaling;
+- **L0** closed-form orbital turning and large-N Earth-fixed physical-guide
+  scaling;
 - **L1** numerical planar two-body propagation between rotating Earth-fixed
   point nodes;
 - rotor population, energy, passage-frequency, guide-occupancy, and mean
   reaction-force scaling;
+- OR-1.1 Earth-fixed guide-frame kinematics that keep interaction time,
+  inertial turn path, and physical guide length separate;
 - strict unit-bearing YAML scenarios, machine-readable manifests, explicit
   parameter sweeps, and a reproducible Markdown report.
 
@@ -30,8 +33,11 @@ On POSIX shells, replace `.venv/Scripts/...` with `.venv/bin/...`.
 
 Each `run` writes `result.json` plus `manifest.json`. The manifest contains the
 scenario ID, complete canonical SI inputs, derived values, model/fidelity
-version, Git commit when available, UTC timestamp, SHA-256 configuration hash,
-and warnings. No required physical input receives a silent default.
+version, source Git commit when available, UTC timestamp, SHA-256 configuration
+hash, runtime library versions, numerical solver settings, and warnings. The
+`artifact_commit` field remains null because a file cannot embed the hash of
+the commit containing that same file. No required physical input receives a
+silent default.
 
 ## Configuration
 
@@ -40,14 +46,27 @@ Physical YAML values must carry units. See
 accepts only an equatorial, prograde stream; unsupported geometry is rejected
 instead of being approximated silently.
 
+`transfer.node_stride` is a ballistic leg primitive: 1 targets the next node,
+2 bypasses one intermediate node, and 3 bypasses two. Legacy
+`transfer.skip_nodes` YAML is accepted with a manifest warning. Static failed
+node routes are represented separately, so a local failure does not turn the
+whole stream into a homogeneous stride-two ring.
+
+Failure-route results also contain node transitions. The two guides bordering
+a failed-node cluster use mixed incoming/outgoing strides; periodic stride-k
+turns are never reported as those local guide requirements.
+
 The public API intended for a later read-only application is small:
 
 ```python
-from orbital_ring import evaluate_scenario, load_scenario
+from orbital_ring import evaluate_failure_route, evaluate_scenario, load_scenario
 
 scenario = load_scenario("scenarios/reference.yaml")
 result = evaluate_scenario(scenario)
 print(result.ballistic.minimum_altitude_m)
+
+failure = evaluate_failure_route(scenario, failed_nodes=[12, 13])
+print(failure.bypass_legs[0].ballistic.node_stride)  # 3
 ```
 
 ## Sweeps
@@ -59,10 +78,14 @@ one parameter per design point, avoiding the 2,200-point Cartesian product.
 
 ```bash
 orbital-ring sweep sweeps/node-count-only.yaml --output artifacts/node-sweep
+orbital-ring evidence scenarios/reference.yaml --output ci-evidence/or-1.1
 ```
 
 CSV, Parquet, a complete JSON result set, and a sweep manifest are written.
 A configured Cartesian design is refused unless `--allow-cartesian` is passed.
+The `evidence` command writes global force closure, physical-guide convergence,
+finite-node L1, free-flight bypass, mixed node-transition, and rotor-element
+scaling tables.
 
 ## Repository layout
 
@@ -82,16 +105,20 @@ A configured Cartesian design is refused unless `--allow-cartesian` is passed.
 │   ├── config.py
 │   ├── constants.py
 │   ├── geometry.py
+│   ├── guide.py
 │   ├── manifest.py
+│   ├── network.py
 │   ├── orbit.py
 │   ├── report.py
 │   ├── results.py
 │   ├── rotor.py
 │   ├── sweep.py
+│   ├── evidence.py
 │   └── units.py
 └── tests/
 ```
 
 See [MODEL.md](MODEL.md) for equations and [ASSUMPTIONS.md](ASSUMPTIONS.md)
-for the boundary of the model.
-
+for the boundary of the model. [GENERATED_ARTIFACTS.md](GENERATED_ARTIFACTS.md)
+defines what evidence is tracked versus produced by CI, and
+[OR2_INTERFACES.md](OR2_INTERFACES.md) records the proposed extension boundaries.

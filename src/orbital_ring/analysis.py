@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
+
 from orbital_ring.ballistic import solve_ballistic_intercept
 from orbital_ring.config import Scenario
-from orbital_ring.geometry import node_angular_spacing
+from orbital_ring.geometry import node_angular_spacing, rotate_vector
 from orbital_ring.manifest import build_manifest
 from orbital_ring.orbit import evaluate_closed_form
 from orbital_ring.results import BallisticResult, SimulationResult
@@ -16,7 +18,7 @@ from orbital_ring.rotor import evaluate_rotor_stream
 def _scenario_warnings(
     scenario: Scenario, closed_form, ballistic: BallisticResult | None
 ) -> list[str]:
-    warnings: list[str] = []
+    warnings: list[str] = list(scenario.configuration_warnings)
     if scenario.rotor.geocentric_velocity_m_s <= closed_form.circular_velocity_m_s:
         warnings.append(
             "Rotor velocity is at or below circular velocity; L0 magnetic support and "
@@ -34,10 +36,11 @@ def _scenario_warnings(
             warnings.append("The numerical free-flight trajectory intersects Earth.")
         elif ballistic.violates_minimum_safe_altitude:
             warnings.append("The numerical trajectory violates the minimum-safe altitude.")
-        if scenario.transfer.skip_nodes > 1:
+        if scenario.transfer.node_stride > 1:
             warnings.append(
-                f"This trajectory intentionally bypasses {scenario.transfer.skip_nodes - 1} "
-                "intermediate node(s)."
+                f"This ballistic leg has node_stride={scenario.transfer.node_stride} and "
+                f"bypasses {scenario.transfer.node_stride - 1} intermediate node(s). "
+                "It does not by itself define a whole-ring failure route."
             )
     warnings.append("L0 guide lengths are large-N scaling approximations.")
     return warnings
@@ -54,6 +57,7 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             scenario.magnetic.max_lateral_acceleration_m_s2
         ),
         node_count=scenario.ring.node_count,
+        earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
     )
 
     ballistic: BallisticResult | None = None
@@ -66,11 +70,17 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             mu_m3_s2=scenario.earth.gravitational_parameter_m3_s2,
             earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
             minimum_safe_altitude_m=scenario.safety.minimum_safe_altitude_m,
-            skip_nodes=scenario.transfer.skip_nodes,
+            node_stride=scenario.transfer.node_stride,
         )
         flight_time = ballistic.flight_time_s
-        active_angle = ballistic.required_active_deflection_angle_rad
-        delta_v = ballistic.required_delta_v_m_s
+        target_angle = (
+            ballistic.node_angular_spacing_rad
+            + scenario.earth.rotation_rate_rad_s * ballistic.flight_time_s
+        )
+        incoming_local = rotate_vector(
+            np.asarray(ballistic.incoming_velocity_m_s), -target_angle
+        )
+        outgoing_local = np.asarray(ballistic.outgoing_velocity_m_s)
     else:
         relative_angular_rate = (
             scenario.rotor.geocentric_velocity_m_s / scenario.radius_m
@@ -80,17 +90,21 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             raise ValueError("L0 circulation requires positive Earth-relative angular rate")
         flight_time = (
             node_angular_spacing(
-                scenario.ring.node_count, scenario.transfer.skip_nodes
+                scenario.ring.node_count, scenario.transfer.node_stride
             )
             / relative_angular_rate
         )
         active_angle = (
-            closed.magnetic_turning_angle_rad
-            * scenario.transfer.skip_nodes
+            closed.earth_fixed_magnetic_turning_angle_rad
+            * scenario.transfer.node_stride
             / scenario.ring.node_count
         )
-        delta_v = 2.0 * scenario.rotor.geocentric_velocity_m_s * math.sin(
-            active_angle / 2.0
+        half_angle = 0.5 * active_angle
+        incoming_local = scenario.rotor.geocentric_velocity_m_s * np.array(
+            [math.sin(half_angle), math.cos(half_angle)]
+        )
+        outgoing_local = scenario.rotor.geocentric_velocity_m_s * np.array(
+            [-math.sin(half_angle), math.cos(half_angle)]
         )
 
     rotor = evaluate_rotor_stream(
@@ -98,10 +112,19 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
         element_mass_kg=scenario.rotor.element_mass_kg,
         rotor_velocity_m_s=scenario.rotor.geocentric_velocity_m_s,
         node_count=scenario.ring.node_count,
-        skip_nodes=scenario.transfer.skip_nodes,
+        node_stride=scenario.transfer.node_stride,
         flight_time_s=flight_time,
-        active_deflection_angle_rad=active_angle,
-        required_delta_v_m_s=delta_v,
+        incoming_local_velocity_m_s=(
+            float(incoming_local[0]),
+            float(incoming_local[1]),
+        ),
+        outgoing_local_velocity_m_s=(
+            float(outgoing_local[0]),
+            float(outgoing_local[1]),
+        ),
+        guide_tangential_speed_m_s=(
+            scenario.earth.rotation_rate_rad_s * scenario.radius_m
+        ),
         allowed_lateral_acceleration_m_s2=(
             scenario.magnetic.max_lateral_acceleration_m_s2
         ),
@@ -111,7 +134,7 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
         "circular_velocity_m_s": closed.circular_velocity_m_s,
         "escape_velocity_m_s": closed.escape_velocity_m_s,
         "node_angular_spacing_rad": node_angular_spacing(
-            scenario.ring.node_count, scenario.transfer.skip_nodes
+            scenario.ring.node_count, scenario.transfer.node_stride
         ),
         "number_of_rotor_elements": rotor.number_of_elements,
     }
@@ -127,4 +150,3 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
         ballistic=ballistic,
         rotor_stream=rotor,
     )
-

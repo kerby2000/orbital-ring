@@ -52,7 +52,7 @@ def _plot(
     plt.close(figure)
 
 
-def _minimum_altitudes(scenario: Scenario, skip_nodes: int) -> list[float]:
+def _minimum_altitudes(scenario: Scenario, node_stride: int) -> list[float]:
     values: list[float] = []
     for node_count in REPORT_NODE_COUNTS:
         transfer = solve_ballistic_intercept(
@@ -63,7 +63,7 @@ def _minimum_altitudes(scenario: Scenario, skip_nodes: int) -> list[float]:
             mu_m3_s2=scenario.earth.gravitational_parameter_m3_s2,
             earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
             minimum_safe_altitude_m=scenario.safety.minimum_safe_altitude_m,
-            skip_nodes=skip_nodes,
+            node_stride=node_stride,
         )
         values.append(transfer.minimum_altitude_m / 1_000.0)
     return values
@@ -90,9 +90,10 @@ def generate_baseline_report(
                 scenario.magnetic.max_lateral_acceleration_m_s2
             ),
             node_count=node_count,
+            earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
         )
-        l0_total_km.append(closed.total_guide_length_m / 1_000.0)
-        l0_node_km.append(closed.guide_length_per_node_m / 1_000.0)
+        l0_total_km.append(closed.total_physical_guide_length_m / 1_000.0)
+        l0_node_km.append(closed.physical_guide_length_per_node_m / 1_000.0)
 
     fixed_node = (
         f"h={scenario.ring.altitude_m / 1_000:g} km; "
@@ -104,8 +105,8 @@ def generate_baseline_report(
         REPORT_NODE_COUNTS,
         l0_node_km,
         xlabel="Node count",
-        ylabel="L0 guide length per node (km)",
-        title="Node count vs magnetic guide length per node (large-N L0)",
+        ylabel="L0 physical guide length per node (km)",
+        title="Node count vs Earth-fixed physical guide length per node (large-N L0)",
         fixed_parameters=fixed_node,
         xscale="log",
         yscale="log",
@@ -115,8 +116,8 @@ def generate_baseline_report(
         REPORT_NODE_COUNTS,
         l0_total_km,
         xlabel="Node count",
-        ylabel="L0 total guide length (km)",
-        title="Node count vs total magnetic guide length (large-N L0)",
+        ylabel="L0 total physical guide length (km)",
+        title="Node count vs total Earth-fixed physical guide length (large-N L0)",
         fixed_parameters=fixed_node,
         xscale="log",
     )
@@ -144,7 +145,7 @@ def generate_baseline_report(
         bypass_min_km,
         xlabel="Node count",
         ylabel="Minimum altitude (km)",
-        title="Node count vs one-node-bypass minimum altitude (skip=2)",
+        title="Node count vs one-node-bypass minimum altitude (node stride=2)",
         fixed_parameters=fixed_ballistic,
         xscale="log",
     )
@@ -196,7 +197,7 @@ def generate_baseline_report(
         title="Element mass vs passage frequency at constant total rotor mass",
         fixed_parameters=(
             f"M={scenario.rotor.total_moving_mass_kg / 1_000:g} tonnes; "
-            f"N={scenario.ring.node_count}; skip=1; L1 period={circulation_period:.3f} s"
+            f"N={scenario.ring.node_count}; node stride=1; L1 period={circulation_period:.3f} s"
         ),
         xscale="log",
         yscale="log",
@@ -228,14 +229,18 @@ Fidelity: L0 closed-form scaling and L1 numerical two-body propagation
 | Circular velocity | {closed.circular_velocity_m_s / 1_000:.6f} km/s |
 | Escape velocity | {closed.escape_velocity_m_s / 1_000:.6f} km/s |
 | Continuous magnetic support | {closed.continuous_support_acceleration_m_s2:.6f} m/s² |
-| L0 magnetic turning angle | {closed.magnetic_turning_angle_rad:.6f} rad |
+| L0 magnetic turn over inertial-period circuit | {closed.magnetic_turning_angle_inertial_period_rad:.6f} rad |
+| L0 magnetic turn over Earth-relative circuit | {closed.earth_fixed_magnetic_turning_angle_rad:.6f} rad |
 | L0 magnetic curvature radius | {closed.magnetic_curvature_radius_m / 1_000:.6f} km |
-| L0 total active guide length | {closed.total_guide_length_m / 1_000:.6f} km |
-| L0 guide length per node | {closed.guide_length_per_node_m:.3f} m |
+| L0 total Earth-fixed physical guide length | {closed.total_physical_guide_length_m / 1_000:.6f} km |
+| L0 physical guide length per node | {closed.physical_guide_length_per_node_m:.3f} m |
 | L1 flight time | {ballistic.flight_time_s:.6f} s |
 | L1 minimum altitude | {ballistic.minimum_altitude_m / 1_000:.6f} km |
 | L1 active deflection angle | {ballistic.required_active_deflection_angle_rad:.8f} rad |
 | L1 required delta-v | {ballistic.required_delta_v_m_s:.6f} m/s |
+| L1 ideal interaction time | {rotor.ideal_interaction_time_s:.8f} s |
+| L1 inertial turn path length | {rotor.inertial_turn_path_length_m:.6f} m |
+| L1 Earth-fixed physical guide estimate | {rotor.physical_guide_length_estimate_m:.6f} m |
 | Elements | {rotor.number_of_elements:,.0f} |
 | Passage frequency per node | {rotor.element_passage_frequency_per_node_hz:,.6f} Hz |
 | Kinetic energy per element | {rotor.kinetic_energy_per_element_j / 1.0e6:.6f} MJ |
@@ -268,4 +273,3 @@ rotates with Earth.
     report_path = output / "BASELINE_REPORT.md"
     report_path.write_text(report, encoding="utf-8")
     return report_path
-

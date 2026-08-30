@@ -1,0 +1,452 @@
+"""OR-1.1 reproducible validation and design-space evidence tables."""
+
+from __future__ import annotations
+
+from dataclasses import asdict
+import json
+import math
+from pathlib import Path
+from typing import Iterable
+
+import numpy as np
+import pandas as pd
+
+from orbital_ring.analysis import evaluate_scenario
+from orbital_ring.config import Scenario, load_scenario
+from orbital_ring.geometry import rotate_vector
+from orbital_ring.network import evaluate_failure_route
+from orbital_ring.rotor import evaluate_rotor_stream
+
+
+FORCE_CLOSURE_NODE_COUNTS = (48, 96, 192, 480, 960, 1920)
+DESIGN_SPACE_NODE_COUNTS = (10, 16, 24, 32, 48, 64, 96, 192, 480, 960, 1920)
+GUIDE_CONVERGENCE_NODE_COUNTS = (48, 96, 192, 480, 960, 1920)
+BYPASS_NODE_COUNTS = (48, 96, 192, 480, 960)
+ROTOR_ELEMENT_MASSES_KG = (1.0, 0.5, 0.1, 0.05, 0.02, 0.01, 0.005, 0.001)
+
+
+def _direct_scenario(scenario: Scenario, node_count: int | None = None) -> Scenario:
+    overrides: dict[str, float | int] = {"transfer.node_stride": 1}
+    if node_count is not None:
+        overrides["ring.node_count"] = node_count
+    return scenario.with_overrides(overrides)
+
+
+def force_closure_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = FORCE_CLOSURE_NODE_COUNTS,
+) -> pd.DataFrame:
+    """Compare summed finite-node L1 reactions with continuous support force."""
+
+    rows: list[dict[str, float | int]] = []
+    for node_count in node_counts:
+        result = evaluate_scenario(_direct_scenario(scenario, node_count))
+        ballistic = result.ballistic
+        if ballistic is None:
+            raise ValueError("force-closure evidence requires L1 fidelity")
+        target_angle = (
+            ballistic.node_angular_spacing_rad
+            + scenario.earth.rotation_rate_rad_s * ballistic.flight_time_s
+        )
+        outgoing_next = rotate_vector(
+            np.asarray(ballistic.outgoing_velocity_m_s), target_angle
+        )
+        incoming = np.asarray(ballistic.incoming_velocity_m_s)
+        rotor_delta_v = outgoing_next - incoming
+        radial_unit = np.array([math.cos(target_angle), math.sin(target_angle)])
+        mass_flow_per_node = (
+            scenario.rotor.total_moving_mass_kg
+            / (node_count * ballistic.flight_time_s)
+        )
+        radial_reaction_per_node = -mass_flow_per_node * float(
+            np.dot(rotor_delta_v, radial_unit)
+        )
+        summed_l1 = node_count * radial_reaction_per_node
+        continuous = (
+            scenario.rotor.total_moving_mass_kg
+            * result.closed_form.continuous_support_acceleration_m_s2
+        )
+        signed_error = (summed_l1 - continuous) / continuous
+        rows.append(
+            {
+                "node_count": node_count,
+                "summed_l1_node_force_n": summed_l1,
+                "continuous_support_force_n": continuous,
+                "signed_relative_error": signed_error,
+                "absolute_relative_error": abs(signed_error),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def node_count_l1_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = DESIGN_SPACE_NODE_COUNTS,
+) -> pd.DataFrame:
+    rows: list[dict[str, float | int | bool]] = []
+    for node_count in node_counts:
+        result = evaluate_scenario(_direct_scenario(scenario, node_count))
+        ballistic = result.ballistic
+        if ballistic is None:
+            raise ValueError("node-count L1 evidence requires L1 fidelity")
+        guide_per_node = result.rotor_stream.physical_guide_length_estimate_m
+        rows.append(
+            {
+                "node_count": node_count,
+                "direct_flight_time_s": ballistic.flight_time_s,
+                "minimum_free_flight_altitude_m": ballistic.minimum_altitude_m,
+                "active_deflection_angle_rad": (
+                    ballistic.required_active_deflection_angle_rad
+                ),
+                "l1_physical_guide_length_per_node_m": guide_per_node,
+                "total_l1_physical_guide_length_m": node_count * guide_per_node,
+                "ideal_interaction_time_s": (
+                    result.rotor_stream.ideal_interaction_time_s
+                ),
+                "guide_relative_entry_speed_m_s": (
+                    result.rotor_stream.earth_fixed_guide_relative_entry_speed_m_s
+                ),
+                "guide_relative_exit_speed_m_s": (
+                    result.rotor_stream.earth_fixed_guide_relative_exit_speed_m_s
+                ),
+                "inertial_turn_path_length_m": (
+                    result.rotor_stream.inertial_turn_path_length_m
+                ),
+                "node_delta_v_m_s": ballistic.required_delta_v_m_s,
+                "average_node_reaction_force_n": (
+                    result.rotor_stream.average_node_reaction_force_mdot_n
+                ),
+                "intersects_earth": ballistic.intersects_earth,
+                "violates_minimum_safe_altitude": (
+                    ballistic.violates_minimum_safe_altitude
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def physical_guide_convergence_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = GUIDE_CONVERGENCE_NODE_COUNTS,
+) -> pd.DataFrame:
+    rows: list[dict[str, float | int]] = []
+    for node_count in node_counts:
+        result = evaluate_scenario(_direct_scenario(scenario, node_count))
+        physical_per_node = result.rotor_stream.physical_guide_length_estimate_m
+        l1_total = node_count * physical_per_node
+        l0_total = result.closed_form.total_physical_guide_length_m
+        rows.append(
+            {
+                "node_count": node_count,
+                "l1_physical_guide_length_per_node_m": physical_per_node,
+                "l1_total_physical_guide_length_m": l1_total,
+                "l0_large_n_physical_guide_length_m": l0_total,
+                "signed_relative_error": (l1_total - l0_total) / l0_total,
+                "absolute_relative_error": abs(l1_total - l0_total) / abs(l0_total),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def bypass_leg_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = BYPASS_NODE_COUNTS,
+) -> pd.DataFrame:
+    """Report local bypass geometry for one or two adjacent failed nodes."""
+
+    rows: list[dict[str, object]] = []
+    for node_count in node_counts:
+        sized = _direct_scenario(scenario, node_count)
+        for failure_count, failure_label in (
+            (1, "one_failed_node"),
+            (2, "two_adjacent_failed_nodes"),
+        ):
+            failed_nodes = tuple(range(1, 1 + failure_count))
+            route = evaluate_failure_route(sized, failed_nodes)
+            if len(route.bypass_legs) != 1:
+                raise AssertionError("adjacent failure case must produce one bypass leg")
+            bypass = route.bypass_legs[0]
+            ballistic = bypass.ballistic
+            rows.append(
+                {
+                    "node_count": node_count,
+                    "failure_case": failure_label,
+                    "failed_nodes": ",".join(str(node) for node in failed_nodes),
+                    "active_node_count": route.active_node_count,
+                    "unaffected_normal_leg_count": route.normal_leg_count,
+                    "bypass_start_node": bypass.start_node,
+                    "bypass_target_node": bypass.target_node,
+                    "node_stride": ballistic.node_stride,
+                    "bypassed_node_count": len(bypass.bypassed_nodes),
+                    "local_bypass_flight_time_s": ballistic.flight_time_s,
+                    "local_bypass_minimum_altitude_m": ballistic.minimum_altitude_m,
+                    "departure_radial_velocity_m_s": (
+                        ballistic.outgoing_velocity_m_s[0]
+                    ),
+                    "departure_tangential_velocity_m_s": (
+                        ballistic.outgoing_velocity_m_s[1]
+                    ),
+                    "arrival_inertial_velocity_x_m_s": (
+                        ballistic.incoming_velocity_m_s[0]
+                    ),
+                    "arrival_inertial_velocity_y_m_s": (
+                        ballistic.incoming_velocity_m_s[1]
+                    ),
+                    "route_circulation_period_s": route.route_circulation_period_s,
+                    "normal_reference_circulation_period_s": (
+                        route.normal_reference_circulation_period_s
+                    ),
+                    "active_node_passage_frequency_hz": (
+                        route.active_node_passage_frequency_hz
+                    ),
+                    "normal_reference_passage_frequency_hz": (
+                        route.normal_reference_passage_frequency_hz
+                    ),
+                    "intersects_earth": ballistic.intersects_earth,
+                    "violates_minimum_safe_altitude": (
+                        ballistic.violates_minimum_safe_altitude
+                    ),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def failure_transition_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = BYPASS_NODE_COUNTS,
+) -> pd.DataFrame:
+    """Report actual mixed-stride guide transitions at active bypass endpoints."""
+
+    rows: list[dict[str, object]] = []
+    for node_count in node_counts:
+        sized = _direct_scenario(scenario, node_count)
+        for failure_count, failure_label in (
+            (1, "one_failed_node"),
+            (2, "two_adjacent_failed_nodes"),
+        ):
+            failed_nodes = tuple(range(1, 1 + failure_count))
+            route = evaluate_failure_route(sized, failed_nodes)
+            affected = [
+                transition
+                for transition in route.node_transitions
+                if transition.is_failure_related
+            ]
+            if len(affected) != 2:
+                raise AssertionError("one adjacent failure cluster must affect two nodes")
+            for transition in affected:
+                rows.append(
+                    {
+                        "node_count": node_count,
+                        "failure_case": failure_label,
+                        "failed_nodes": ",".join(str(node) for node in failed_nodes),
+                        "transition_node": transition.node_index,
+                        "incoming_leg_stride": transition.incoming_leg_stride,
+                        "outgoing_leg_stride": transition.outgoing_leg_stride,
+                        "actual_transition_angle_rad": (
+                            transition.actual_transition_angle_rad
+                        ),
+                        "actual_transition_delta_v_m_s": (
+                            transition.actual_transition_delta_v_m_s
+                        ),
+                        "ideal_interaction_time_s": (
+                            transition.ideal_interaction_time_s
+                        ),
+                        "guide_relative_entry_speed_m_s": (
+                            transition.guide_relative_entry_speed_m_s
+                        ),
+                        "guide_relative_exit_speed_m_s": (
+                            transition.guide_relative_exit_speed_m_s
+                        ),
+                        "physical_guide_length_estimate_m": (
+                            transition.physical_guide_length_estimate_m
+                        ),
+                        "inertial_turn_path_length_m": (
+                            transition.inertial_turn_path_length_m
+                        ),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
+def rotor_element_scaling_table(
+    scenario: Scenario,
+    element_masses_kg: Iterable[float] = ROTOR_ELEMENT_MASSES_KG,
+) -> pd.DataFrame:
+    reference = evaluate_scenario(_direct_scenario(scenario, 96))
+    ballistic = reference.ballistic
+    if ballistic is None:
+        raise ValueError("rotor-element evidence requires L1 fidelity")
+    target_angle = (
+        ballistic.node_angular_spacing_rad
+        + scenario.earth.rotation_rate_rad_s * ballistic.flight_time_s
+    )
+    incoming_local = rotate_vector(
+        np.asarray(ballistic.incoming_velocity_m_s), -target_angle
+    )
+    outgoing_local = ballistic.outgoing_velocity_m_s
+    rows: list[dict[str, float]] = []
+    for element_mass_kg in element_masses_kg:
+        rotor = evaluate_rotor_stream(
+            total_rotor_mass_kg=scenario.rotor.total_moving_mass_kg,
+            element_mass_kg=element_mass_kg,
+            rotor_velocity_m_s=scenario.rotor.geocentric_velocity_m_s,
+            node_count=96,
+            node_stride=1,
+            flight_time_s=ballistic.flight_time_s,
+            incoming_local_velocity_m_s=(
+                float(incoming_local[0]),
+                float(incoming_local[1]),
+            ),
+            outgoing_local_velocity_m_s=outgoing_local,
+            guide_tangential_speed_m_s=(
+                scenario.earth.rotation_rate_rad_s * scenario.radius_m
+            ),
+            allowed_lateral_acceleration_m_s2=(
+                scenario.magnetic.max_lateral_acceleration_m_s2
+            ),
+        )
+        rows.append(
+            {
+                "element_mass_g": element_mass_kg * 1000.0,
+                "total_number_of_elements": rotor.number_of_elements,
+                "kinetic_energy_per_element_j": rotor.kinetic_energy_per_element_j,
+                "passage_frequency_per_node_hz": (
+                    rotor.element_passage_frequency_per_node_hz
+                ),
+                "mean_inertial_element_spacing_m": (
+                    rotor.mean_inertial_element_spacing_m
+                ),
+                "mean_guide_frame_element_spacing_m": (
+                    rotor.mean_guide_frame_element_spacing_m
+                ),
+                "ideal_interaction_time_s": rotor.ideal_interaction_time_s,
+                "simultaneous_elements_in_guide": (
+                    rotor.elements_simultaneously_in_guide
+                ),
+                "force_per_individual_element_n": (
+                    element_mass_kg
+                    * scenario.magnetic.max_lateral_acceleration_m_s2
+                ),
+                "total_mean_node_force_n": (
+                    rotor.average_node_reaction_force_mdot_n
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _format_markdown_value(value: object) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, float):
+        if value == 0.0:
+            return "0"
+        if abs(value) >= 1.0e6 or abs(value) < 1.0e-4:
+            return f"{value:.8e}"
+        return f"{value:.8f}".rstrip("0").rstrip(".")
+    return str(value)
+
+
+def dataframe_to_markdown(frame: pd.DataFrame) -> str:
+    headers = [str(column) for column in frame.columns]
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join("---" for _ in headers) + " |",
+    ]
+    for row in frame.itertuples(index=False, name=None):
+        lines.append("| " + " | ".join(_format_markdown_value(value) for value in row) + " |")
+    return "\n".join(lines)
+
+
+def generate_hardening_evidence(
+    scenario_path: str | Path, output_directory: str | Path
+) -> Path:
+    scenario = load_scenario(scenario_path)
+
+    # Capture provenance before creating or rewriting any output files. This
+    # ensures source_worktree_dirty describes the source state at generation
+    # start rather than changes caused by the evidence generator itself.
+    reference = evaluate_scenario(_direct_scenario(scenario, 96))
+
+    output = Path(output_directory)
+    output.mkdir(parents=True, exist_ok=True)
+
+    closure = force_closure_table(scenario)
+    nodes = node_count_l1_table(scenario)
+    guide_convergence = physical_guide_convergence_table(scenario)
+    bypass_legs = bypass_leg_table(scenario)
+    transitions = failure_transition_table(scenario)
+    elements = rotor_element_scaling_table(scenario)
+    tables = {
+        "global-force-closure.csv": closure,
+        "physical-guide-convergence.csv": guide_convergence,
+        "node-count-l1.csv": nodes,
+        "failure-bypass-legs.csv": bypass_legs,
+        "failure-node-transitions.csv": transitions,
+        "rotor-element-scaling.csv": elements,
+    }
+    (output / "failure-bypasses.csv").unlink(missing_ok=True)
+    for filename, frame in tables.items():
+        frame.to_csv(output / filename, index=False)
+
+    manifest = asdict(reference.manifest)
+    manifest["evidence_files"] = list(tables)
+    manifest["evidence_kind"] = "OR-1.1 hardening tables"
+    (output / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8"
+    )
+
+    report = f"""# OR-1.1 physics-kernel hardening evidence
+
+Scenario: `{scenario.scenario_id}`
+
+Configuration hash: `{reference.manifest.configuration_hash}`
+
+Source commit at generation: `{reference.manifest.source_commit}`
+
+Source worktree dirty at generation: `{reference.manifest.source_worktree_dirty}`
+
+The ballistic primitive uses **node stride**: stride 1 targets the next node,
+stride 2 bypasses one node, and stride 3 bypasses two nodes. Failure-route rows
+contain one local bypass leg plus the reported count of unaffected stride-one
+legs. They do not model the whole ring as a homogeneous stride-two stream.
+
+## Global force closure
+
+The summed finite-node value is `N × mean L1 node reaction force`. The
+continuous value is `M × (v²/r − μ/r²)`. Signed and absolute relative errors
+show the finite-node convergence.
+
+{dataframe_to_markdown(closure)}
+
+## L1 node-count design space
+
+{dataframe_to_markdown(nodes)}
+
+## Physical Earth-fixed guide convergence
+
+{dataframe_to_markdown(guide_convergence)}
+
+## Free-flight failed-node bypass legs
+
+{dataframe_to_markdown(bypass_legs)}
+
+Periodic stride-k turn values are not guide requirements for these local
+failure cases. The actual active-node transitions are reported separately.
+
+## Failure-related active-node transitions
+
+{dataframe_to_markdown(transitions)}
+
+## Rotor-element scaling at fixed total mass
+
+{dataframe_to_markdown(elements)}
+
+Reducing element mass reduces kinetic energy and instantaneous force per
+element in direct proportion to mass. Element count, passage frequency, and
+simultaneous guide occupancy rise inversely, leaving the total mean node force
+unchanged for fixed total rotor mass and trajectory.
+"""
+    report_path = output / "OR-1.1-EVIDENCE.md"
+    report_path.write_text(report, encoding="utf-8")
+    return report_path
