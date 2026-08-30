@@ -247,6 +247,12 @@ def generate_hardening_evidence(
     scenario_path: str | Path, output_directory: str | Path
 ) -> Path:
     scenario = load_scenario(scenario_path)
+
+    # Capture provenance before creating or rewriting any output files. This
+    # ensures source_worktree_dirty describes the source state at generation
+    # start rather than changes caused by the evidence generator itself.
+    reference = evaluate_scenario(_direct_scenario(scenario, 96))
+
     output = Path(output_directory)
     output.mkdir(parents=True, exist_ok=True)
 
@@ -263,7 +269,6 @@ def generate_hardening_evidence(
     for filename, frame in tables.items():
         frame.to_csv(output / filename, index=False)
 
-    reference = evaluate_scenario(_direct_scenario(scenario, 96))
     manifest = asdict(reference.manifest)
     manifest["evidence_files"] = list(tables)
     manifest["evidence_kind"] = "OR-1.1 hardening tables"
