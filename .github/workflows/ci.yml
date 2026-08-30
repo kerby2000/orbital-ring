@@ -1,0 +1,52 @@
+name: Physics kernel CI
+
+"on":
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package and development dependencies
+        run: python -m pip install --upgrade pip && python -m pip install -e ".[dev]"
+
+      - name: Run test suite
+        run: python -m pytest
+
+      - name: Run reference scenario
+        run: orbital-ring run scenarios/reference.yaml --output ci-evidence/reference-run
+
+      - name: Run bounded node-count regression sweep
+        run: orbital-ring sweep sweeps/node-count-only.yaml --output ci-evidence/node-count-sweep
+
+      - name: Generate OR-1.1 physics evidence
+        run: orbital-ring evidence scenarios/reference.yaml --output ci-evidence/or-1.1
+
+      - name: Archive reproducible evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: or-1.1-evidence-py${{ matrix.python-version }}
+          path: ci-evidence/
+          if-no-files-found: warn
+          retention-days: 30

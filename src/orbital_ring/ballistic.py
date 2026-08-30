@@ -158,7 +158,7 @@ def solve_ballistic_intercept(
     mu_m3_s2: float,
     earth_rotation_rad_s: float,
     minimum_safe_altitude_m: float,
-    skip_nodes: int = 1,
+    node_stride: int = 1,
     settings: IntegratorSettings = DEFAULT_INTEGRATOR_SETTINGS,
 ) -> BallisticResult:
     """Shoot a fixed-speed rotor element to a rotating target node.
@@ -171,10 +171,10 @@ def solve_ballistic_intercept(
 
     if node_count < 2:
         raise ValueError("node_count must be at least 2")
-    if skip_nodes <= 0 or skip_nodes >= node_count:
-        raise ValueError("skip_nodes must satisfy 1 <= skip_nodes < node_count")
+    if node_stride <= 0 or node_stride >= node_count:
+        raise ValueError("node_stride must satisfy 1 <= node_stride < node_count")
     radius_m = earth_radius_m + altitude_m
-    angular_spacing = node_angular_spacing(node_count, skip_nodes)
+    angular_spacing = node_angular_spacing(node_count, node_stride)
     initial_position = np.array([radius_m, 0.0], dtype=float)
     time_guess, guesses = _initial_guesses(
         mu_m3_s2=mu_m3_s2,
@@ -214,7 +214,7 @@ def solve_ballistic_intercept(
         target_position = target_node_position(
             radius_m,
             node_count,
-            skip_nodes,
+            node_stride,
             earth_rotation_rad_s,
             flight_time,
         )
@@ -276,7 +276,7 @@ def solve_ballistic_intercept(
 
     return BallisticResult(
         node_angular_spacing_rad=angular_spacing,
-        surface_arc_separation_m=node_arc_separation(radius_m, node_count, skip_nodes),
+        surface_arc_separation_m=node_arc_separation(radius_m, node_count, node_stride),
         flight_time_s=flight_time,
         outgoing_velocity_m_s=(float(outgoing_velocity[0]), float(outgoing_velocity[1])),
         incoming_velocity_m_s=(float(incoming_velocity[0]), float(incoming_velocity[1])),
@@ -285,8 +285,7 @@ def solve_ballistic_intercept(
         minimum_altitude_m=minimum_altitude,
         intersects_earth=minimum_altitude <= 0.0,
         violates_minimum_safe_altitude=minimum_altitude < minimum_safe_altitude_m,
-        skip_nodes=skip_nodes,
+        node_stride=node_stride,
         terminal_position_error_m=position_error_m,
         solver_evaluations=evaluation_count,
     )
-

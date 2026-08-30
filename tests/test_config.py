@@ -1,4 +1,3 @@
-from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -27,6 +26,18 @@ def test_reference_scenario_has_traceability_fields():
     assert manifest.derived_parameters["geocentric_radius_m"] == 6_871_000.0
     assert manifest.model_version
     assert manifest.timestamp_utc
+    assert manifest.source_commit
+    assert manifest.artifact_commit is None
+    assert manifest.python_version
+    assert manifest.numpy_version
+    assert manifest.scipy_version
+    assert manifest.pint_version
+    assert manifest.platform_information
+    assert manifest.numerical_integrator.endswith("DOP853")
+    assert manifest.integrator_rtol == 2.0e-10
+    assert manifest.integrator_atol == 1.0e-7
+    assert manifest.terminal_position_tolerance_m == 0.25
+    assert manifest.maximum_solver_evaluations == 120
     assert isinstance(manifest.warnings, tuple)
 
 
@@ -50,3 +61,19 @@ def test_unsupported_geometry_is_rejected():
     with pytest.raises(ConfigurationError, match="equatorial"):
         scenario_from_yaml(raw)
 
+
+def test_legacy_skip_nodes_migrates_with_warning():
+    raw = reference_mapping()
+    raw["transfer"]["skip_nodes"] = raw["transfer"].pop("node_stride")
+    scenario = scenario_from_yaml(raw)
+    assert scenario.transfer.node_stride == 1
+    assert "Deprecated transfer.skip_nodes" in scenario.configuration_warnings[0]
+    result = evaluate_scenario(scenario)
+    assert any("Deprecated transfer.skip_nodes" in item for item in result.manifest.warnings)
+
+
+def test_stride_and_legacy_name_cannot_both_be_defined():
+    raw = reference_mapping()
+    raw["transfer"]["skip_nodes"] = 1
+    with pytest.raises(ConfigurationError, match="must not define both"):
+        scenario_from_yaml(raw)

@@ -9,6 +9,7 @@ from typing import Sequence
 
 from orbital_ring.analysis import evaluate_scenario
 from orbital_ring.config import load_scenario
+from orbital_ring.evidence import generate_hardening_evidence
 from orbital_ring.report import generate_baseline_report
 from orbital_ring.sweep import run_sweep
 
@@ -48,6 +49,12 @@ def build_parser() -> argparse.ArgumentParser:
     report_parser = subparsers.add_parser("report", help="generate baseline Markdown and plots")
     report_parser.add_argument("scenario", type=Path)
     report_parser.add_argument("--output", type=Path, required=True)
+
+    evidence_parser = subparsers.add_parser(
+        "evidence", help="generate OR-1.1 validation and design-space tables"
+    )
+    evidence_parser.add_argument("scenario", type=Path)
+    evidence_parser.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -70,9 +77,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         path = generate_baseline_report(args.scenario, args.output)
         print(path)
         return 0
+    if args.command == "evidence":
+        path = generate_hardening_evidence(args.scenario, args.output)
+        print(path)
+        return 0
     raise AssertionError(f"unhandled command {args.command}")
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

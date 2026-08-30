@@ -12,7 +12,7 @@ def test_rotor_scaling_and_force_consistency():
         element_mass_kg=0.05,
         rotor_velocity_m_s=velocity,
         node_count=96,
-        skip_nodes=1,
+        node_stride=1,
         flight_time_s=39.0,
         active_deflection_angle_rad=angle,
         required_delta_v_m_s=delta_v,
@@ -25,4 +25,3 @@ def test_rotor_scaling_and_force_consistency():
         result.average_node_reaction_force_summed_n, rel=2e-15
     )
     assert result.force_consistency_relative_error < 2e-15
-

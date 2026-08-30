@@ -51,7 +51,7 @@ class SafetyConfig:
 
 @dataclass(frozen=True)
 class TransferConfig:
-    skip_nodes: int
+    node_stride: int
 
 
 @dataclass(frozen=True)
@@ -70,6 +70,7 @@ class Scenario:
     transfer: TransferConfig
     model: ModelConfig
     source_path: str | None = None
+    configuration_warnings: tuple[str, ...] = ()
 
     @property
     def radius_m(self) -> float:
@@ -80,6 +81,7 @@ class Scenario:
 
         data = asdict(self)
         data.pop("source_path", None)
+        data.pop("configuration_warnings", None)
         return data
 
     @property
@@ -105,14 +107,21 @@ class Scenario:
             "rotor.total_moving_mass_kg",
             "magnetic.max_lateral_acceleration_m_s2",
             "safety.minimum_safe_altitude_m",
+            "transfer.node_stride",
             "transfer.skip_nodes",
         }
         for path, value in overrides.items():
+            if path == "transfer.skip_nodes":
+                path = "transfer.node_stride"
             if path not in supported:
                 raise ConfigurationError(f"unsupported sweep override: {path}")
             section, key = path.split(".", maxsplit=1)
             data[section][key] = value
-        return scenario_from_canonical(data, source_path=self.source_path)
+        return scenario_from_canonical(
+            data,
+            source_path=self.source_path,
+            configuration_warnings=self.configuration_warnings,
+        )
 
 
 def _mapping(parent: Mapping[str, Any], key: str) -> Mapping[str, Any]:
@@ -169,6 +178,24 @@ def scenario_from_yaml(raw: Mapping[str, Any], source_path: str | None = None) -
     safety = _mapping(raw, "safety")
     transfer = _mapping(raw, "transfer")
     model = _mapping(raw, "model")
+
+    has_node_stride = "node_stride" in transfer
+    has_legacy_skip_nodes = "skip_nodes" in transfer
+    if has_node_stride and has_legacy_skip_nodes:
+        raise ConfigurationError(
+            "transfer must not define both node_stride and legacy skip_nodes"
+        )
+    configuration_warnings: tuple[str, ...] = ()
+    if has_node_stride:
+        node_stride = transfer["node_stride"]
+    elif has_legacy_skip_nodes:
+        node_stride = transfer["skip_nodes"]
+        configuration_warnings = (
+            "Deprecated transfer.skip_nodes was interpreted as node_stride; "
+            "rename it to transfer.node_stride.",
+        )
+    else:
+        raise ConfigurationError("missing required parameter: transfer.node_stride")
 
     canonical = {
         "scenario_id": scenario_id.strip(),
@@ -227,15 +254,21 @@ def scenario_from_yaml(raw: Mapping[str, Any], source_path: str | None = None) -
             )
         },
         "transfer": {
-            "skip_nodes": _required(transfer, "skip_nodes", "transfer")
+            "node_stride": node_stride
         },
         "model": {"fidelity": _required(model, "fidelity", "model")},
     }
-    return scenario_from_canonical(canonical, source_path=source_path)
+    return scenario_from_canonical(
+        canonical,
+        source_path=source_path,
+        configuration_warnings=configuration_warnings,
+    )
 
 
 def scenario_from_canonical(
-    data: Mapping[str, Any], source_path: str | None = None
+    data: Mapping[str, Any],
+    source_path: str | None = None,
+    configuration_warnings: tuple[str, ...] = (),
 ) -> Scenario:
     try:
         earth_data = data["earth"]
@@ -246,9 +279,10 @@ def scenario_from_canonical(
         transfer_data = data["transfer"]
         model_data = data["model"]
         node_count = _positive_int(ring_data["node_count"], "ring.node_count")
-        skip_nodes = _positive_int(transfer_data["skip_nodes"], "transfer.skip_nodes")
-        if skip_nodes >= node_count:
-            raise ConfigurationError("transfer.skip_nodes must be less than ring.node_count")
+        stride_value = transfer_data.get("node_stride", transfer_data.get("skip_nodes"))
+        node_stride = _positive_int(stride_value, "transfer.node_stride")
+        if node_stride >= node_count:
+            raise ConfigurationError("transfer.node_stride must be less than ring.node_count")
         plane = str(ring_data["plane"]).lower()
         direction = str(ring_data["direction"]).lower()
         fidelity = str(model_data["fidelity"]).upper()
@@ -306,10 +340,10 @@ def scenario_from_canonical(
                     allow_zero=True,
                 )
             ),
-            transfer=TransferConfig(skip_nodes=skip_nodes),
+            transfer=TransferConfig(node_stride=node_stride),
             model=ModelConfig(fidelity=fidelity),
             source_path=source_path,
+            configuration_warnings=configuration_warnings,
         )
     except KeyError as exc:
         raise ConfigurationError(f"missing canonical configuration field: {exc}") from exc
-

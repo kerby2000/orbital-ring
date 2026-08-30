@@ -13,7 +13,7 @@ def evaluate_rotor_stream(
     element_mass_kg: float,
     rotor_velocity_m_s: float,
     node_count: int,
-    skip_nodes: int,
+    node_stride: int,
     flight_time_s: float,
     active_deflection_angle_rad: float,
     required_delta_v_m_s: float,
@@ -21,16 +21,17 @@ def evaluate_rotor_stream(
 ) -> RotorStreamResult:
     """Evaluate a uniformly populated periodic stream.
 
-    For skip trajectories, each element interacts at one of every
-    ``skip_nodes`` nodes. Passage frequency is the uniform average per node.
+    This homogeneous-stride scaling is valid only when the complete regular
+    stream uses ``node_stride``. A local failed-node bypass must not use this
+    function to redefine global passage frequency.
     The summed-force check accounts for the rotating lateral-force direction
     through a finite-angle guide; it is therefore a vector sum, not a sum of
     force magnitudes.
     """
 
     number_of_elements = total_rotor_mass_kg / element_mass_kg
-    circulation_period_s = flight_time_s * node_count / skip_nodes
-    interactions_per_element_per_circulation = node_count / skip_nodes
+    circulation_period_s = flight_time_s * node_count / node_stride
+    interactions_per_element_per_circulation = node_count / node_stride
     passage_frequency = (
         number_of_elements
         * interactions_per_element_per_circulation
@@ -78,4 +79,3 @@ def evaluate_rotor_stream(
         average_node_reaction_force_summed_n=force_summed,
         force_consistency_relative_error=relative_error,
     )
-

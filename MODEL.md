@@ -74,8 +74,9 @@ Between nodes, the rotor element obeys only the planar two-body equations:
 \dot{\mathbf v}=-\mu\frac{\mathbf r}{\lVert\mathbf r\rVert^3}.
 \]
 
-For node count \(N\) and skip parameter \(k\), where \(k=1\) targets the next
-node and \(k=2\) bypasses one node, the Earth-fixed angular spacing is
+For node count \(N\) and **node stride** \(k\), where \(k=1\) targets the next
+node, \(k=2\) bypasses one node, and \(k=3\) bypasses two nodes, the Earth-fixed
+angular spacing is
 
 \[
 \Delta\lambda=\frac{2\pi k}{N}.
@@ -127,10 +128,24 @@ Minimum radius is found on the dense numerical solution over
 \([0,t_f]\). The code flags \(r_{min}\leq R_E\) and a configurable
 \(r_{min}<R_E+h_{safe}\).
 
+### Failure-route topology
+
+Node stride describes one ballistic leg, not the complete network. A static
+route maps every active node to the next active prograde node. With one failed
+node, its upstream node has one local stride-two leg and all other active
+upstream nodes retain stride-one legs. Two adjacent failures produce one local
+stride-three leg. OR-1.1 reports bypass geometry separately from normal
+direct-ring reference quantities.
+
+The approximate static route period is the sum of the flight times of the
+normal and bypass legs actually in the route. Active-node passage frequency is
+\(n_e/T_{route}\), while failed-node frequency is zero. This is distinct from
+the invalid interpretation of a homogeneous stride-two ring.
+
 ## Rotor-stream scaling
 
 For total moving mass \(M\), element mass \(m\), speed \(v\), numerical leg
-time \(t_f\), and skip \(k\):
+time \(t_f\), and a genuinely homogeneous stride \(k\):
 
 \[
 n_e=\frac{M}{m}, \qquad
@@ -178,10 +193,27 @@ Because \(\Delta v=2v\sin(\delta/2)\) for equal endpoint speeds,
 \(F_{sum}=F_{node}\) algebraically. The code reports their numerical relative
 error.
 
+## Global force closure
+
+For a regular direct-routing ring, the finite-node validation compares
+
+\[
+F_{L1,sum}(N)=N F_{node,L1}
+\]
+
+with the continuous-ring support force
+
+\[
+F_{continuous}=M\left(\frac{v^2}{r}-\frac{\mu}{r^2}\right).
+\]
+
+As \(N\) grows, the L1 ballistic deflection divided by leg time converges to
+the continuous support acceleration. OR-1.1 reports the signed and absolute
+relative finite-node error instead of treating L0 as exact at small \(N\).
+
 ## Fidelity labels
 
 - **L0**: closed-form spherical-Earth scaling.
 - **L1**: numerical planar two-body propagation with rotating point targets.
 
 No calculation in this repository claims higher fidelity.
-

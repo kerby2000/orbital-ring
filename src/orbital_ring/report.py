@@ -52,7 +52,7 @@ def _plot(
     plt.close(figure)
 
 
-def _minimum_altitudes(scenario: Scenario, skip_nodes: int) -> list[float]:
+def _minimum_altitudes(scenario: Scenario, node_stride: int) -> list[float]:
     values: list[float] = []
     for node_count in REPORT_NODE_COUNTS:
         transfer = solve_ballistic_intercept(
@@ -63,7 +63,7 @@ def _minimum_altitudes(scenario: Scenario, skip_nodes: int) -> list[float]:
             mu_m3_s2=scenario.earth.gravitational_parameter_m3_s2,
             earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
             minimum_safe_altitude_m=scenario.safety.minimum_safe_altitude_m,
-            skip_nodes=skip_nodes,
+            node_stride=node_stride,
         )
         values.append(transfer.minimum_altitude_m / 1_000.0)
     return values
@@ -144,7 +144,7 @@ def generate_baseline_report(
         bypass_min_km,
         xlabel="Node count",
         ylabel="Minimum altitude (km)",
-        title="Node count vs one-node-bypass minimum altitude (skip=2)",
+        title="Node count vs one-node-bypass minimum altitude (node stride=2)",
         fixed_parameters=fixed_ballistic,
         xscale="log",
     )
@@ -196,7 +196,7 @@ def generate_baseline_report(
         title="Element mass vs passage frequency at constant total rotor mass",
         fixed_parameters=(
             f"M={scenario.rotor.total_moving_mass_kg / 1_000:g} tonnes; "
-            f"N={scenario.ring.node_count}; skip=1; L1 period={circulation_period:.3f} s"
+            f"N={scenario.ring.node_count}; node stride=1; L1 period={circulation_period:.3f} s"
         ),
         xscale="log",
         yscale="log",
@@ -268,4 +268,3 @@ rotates with Earth.
     report_path = output / "BASELINE_REPORT.md"
     report_path.write_text(report, encoding="utf-8")
     return report_path
-

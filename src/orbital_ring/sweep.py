@@ -15,7 +15,11 @@ import yaml
 from orbital_ring.analysis import evaluate_scenario
 from orbital_ring.config import ConfigurationError, Scenario, load_scenario
 from orbital_ring.constants import MODEL_VERSION
-from orbital_ring.manifest import discover_git_commit
+from orbital_ring.manifest import (
+    discover_git_context,
+    numerical_traceability,
+    runtime_traceability,
+)
 from orbital_ring.units import parse_quantity
 
 
@@ -41,7 +45,8 @@ DIMENSION_SPECS: dict[str, tuple[str, str | None]] = {
         "m/s^2",
     ),
     "safety.minimum_safe_altitude": ("safety.minimum_safe_altitude_m", "m"),
-    "transfer.skip_nodes": ("transfer.skip_nodes", None),
+    "transfer.node_stride": ("transfer.node_stride", None),
+    "transfer.skip_nodes": ("transfer.node_stride", None),
 }
 
 
@@ -130,11 +135,12 @@ def _flatten_result(label: str, scenario: Scenario, result) -> dict[str, Any]:
         "scenario_id": scenario.scenario_id,
         "configuration_hash": result.manifest.configuration_hash,
         "timestamp_utc": result.manifest.timestamp_utc,
-        "git_commit": result.manifest.git_commit,
+        "source_commit": result.manifest.source_commit,
+        "source_worktree_dirty": result.manifest.source_worktree_dirty,
         "fidelity": result.manifest.fidelity,
         "warnings_json": json.dumps(result.manifest.warnings),
         "node_count": scenario.ring.node_count,
-        "skip_nodes": scenario.transfer.skip_nodes,
+        "node_stride": scenario.transfer.node_stride,
         "altitude_m": scenario.ring.altitude_m,
         "rotor_velocity_m_s": scenario.rotor.geocentric_velocity_m_s,
         "total_rotor_mass_kg": scenario.rotor.total_moving_mass_kg,
@@ -205,6 +211,7 @@ def run_sweep(
         json.dumps(complete_results, indent=2, allow_nan=False), encoding="utf-8"
     )
     canonical_sweep = json.dumps(config.raw, sort_keys=True, separators=(",", ":"))
+    source_commit, source_dirty = discover_git_context(config.source_path)
     manifest = {
         "sweep_id": config.sweep_id,
         "sweep_configuration": config.raw,
@@ -214,13 +221,16 @@ def run_sweep(
         "base_scenario_inputs": base.canonical_inputs(),
         "model_version": MODEL_VERSION,
         "fidelity": base.model.fidelity,
-        "git_commit": discover_git_commit(config.source_path),
+        "source_commit": source_commit,
+        "source_worktree_dirty": source_dirty,
+        "artifact_commit": None,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "generated_design_points": len(frame),
+        **runtime_traceability(),
+        **numerical_traceability(),
         "warnings": ["L0 guide lengths are large-N scaling approximations."],
     }
     (output / "sweep_manifest.json").write_text(
         json.dumps(manifest, indent=2, allow_nan=False), encoding="utf-8"
     )
     return frame
-

@@ -31,7 +31,7 @@ class BallisticResult:
     minimum_altitude_m: float
     intersects_earth: bool
     violates_minimum_safe_altitude: bool
-    skip_nodes: int
+    node_stride: int
     terminal_position_error_m: float
     solver_evaluations: int
 
@@ -58,9 +58,23 @@ class Manifest:
     derived_parameters: dict[str, Any]
     model_version: str
     fidelity: str
-    git_commit: str | None
+    source_commit: str | None
+    source_worktree_dirty: bool | None
+    artifact_commit: str | None
     timestamp_utc: str
     configuration_hash: str
+    python_version: str
+    numpy_version: str
+    scipy_version: str
+    pint_version: str
+    platform_information: str
+    numerical_integrator: str
+    integrator_rtol: float
+    integrator_atol: float
+    integrator_max_step_policy: str
+    terminal_position_tolerance_m: float
+    solver_algorithm: str
+    maximum_solver_evaluations: int
     warnings: tuple[str, ...]
 
 
@@ -74,3 +88,36 @@ class SimulationResult:
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
+
+@dataclass(frozen=True)
+class RouteLeg:
+    start_node: int
+    target_node: int
+    node_stride: int
+    bypassed_nodes: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class FailureBypassResult:
+    start_node: int
+    target_node: int
+    bypassed_nodes: tuple[int, ...]
+    ballistic: BallisticResult
+
+
+@dataclass(frozen=True)
+class FailureRouteResult:
+    scenario_id: str
+    failed_nodes: tuple[int, ...]
+    active_node_count: int
+    normal_leg_count: int
+    route_circulation_period_s: float
+    normal_reference_circulation_period_s: float
+    active_node_passage_frequency_hz: float
+    normal_reference_passage_frequency_hz: float
+    route_legs: tuple[RouteLeg, ...]
+    bypass_legs: tuple[FailureBypassResult, ...]
+    normal_global_reference: SimulationResult
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)

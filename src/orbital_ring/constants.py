@@ -18,7 +18,6 @@ REFERENCE_EARTH_MU_M3_S2 = 3.986_004_418e14
 REFERENCE_EARTH_ROTATION_RAD_S = 7.292_115_0e-5
 
 TAU = 2.0 * math.pi
-MODEL_VERSION = "0.1.0"
+MODEL_VERSION = "0.2.0"
 L0_LABEL = "L0 closed-form scaling"
 L1_LABEL = "L1 numerical two-body propagation"
-

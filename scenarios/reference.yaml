@@ -23,8 +23,7 @@ safety:
   minimum_safe_altitude: 100 km
 
 transfer:
-  skip_nodes: 1
+  node_stride: 1
 
 model:
   fidelity: L1
-

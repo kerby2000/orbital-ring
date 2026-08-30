@@ -26,7 +26,7 @@ def test_circular_orbit_rotating_target_limit():
         mu_m3_s2=MU,
         earth_rotation_rad_s=REFERENCE_EARTH_ROTATION_RAD_S,
         minimum_safe_altitude_m=100_000.0,
-        skip_nodes=1,
+        node_stride=1,
     )
     expected_time = node_angular_spacing(node_count) / (
         circular / RADIUS - REFERENCE_EARTH_ROTATION_RAD_S
@@ -37,8 +37,8 @@ def test_circular_orbit_rotating_target_limit():
     assert result.terminal_position_error_m < 0.25
 
 
-@pytest.mark.parametrize("skip_nodes", [1, 2, 3])
-def test_reference_direct_and_bypass_transfers(skip_nodes):
+@pytest.mark.parametrize("node_stride", [1, 2, 3])
+def test_reference_direct_and_bypass_transfers(node_stride):
     result = solve_ballistic_intercept(
         earth_radius_m=EARTH_RADIUS,
         altitude_m=ALTITUDE,
@@ -47,10 +47,10 @@ def test_reference_direct_and_bypass_transfers(skip_nodes):
         mu_m3_s2=MU,
         earth_rotation_rad_s=REFERENCE_EARTH_ROTATION_RAD_S,
         minimum_safe_altitude_m=100_000.0,
-        skip_nodes=skip_nodes,
+        node_stride=node_stride,
     )
     assert result.node_angular_spacing_rad == pytest.approx(
-        2.0 * math.pi * skip_nodes / 96
+        2.0 * math.pi * node_stride / 96
     )
     assert np.linalg.norm(result.outgoing_velocity_m_s) == pytest.approx(12_000.0, rel=1e-10)
     assert np.linalg.norm(result.incoming_velocity_m_s) == pytest.approx(12_000.0, rel=1e-8)
@@ -61,7 +61,7 @@ def test_reference_direct_and_bypass_transfers(skip_nodes):
 
 
 def test_low_node_count_bypass_flags_earth_intersection():
-    # skip_nodes=2 advances two node intervals and therefore bypasses one node.
+    # node_stride=2 advances two node intervals and bypasses one node.
     result = solve_ballistic_intercept(
         earth_radius_m=EARTH_RADIUS,
         altitude_m=ALTITUDE,
@@ -70,7 +70,7 @@ def test_low_node_count_bypass_flags_earth_intersection():
         mu_m3_s2=MU,
         earth_rotation_rad_s=REFERENCE_EARTH_ROTATION_RAD_S,
         minimum_safe_altitude_m=100_000.0,
-        skip_nodes=2,
+        node_stride=2,
     )
     assert result.minimum_altitude_m < 0.0
     assert result.intersects_earth
@@ -86,7 +86,26 @@ def test_configurable_safe_altitude_flag():
         mu_m3_s2=MU,
         earth_rotation_rad_s=REFERENCE_EARTH_ROTATION_RAD_S,
         minimum_safe_altitude_m=ALTITUDE,
-        skip_nodes=1,
+        node_stride=1,
     )
     assert result.violates_minimum_safe_altitude
     assert not result.intersects_earth
+
+
+def test_reference_l1_regression_is_not_loosened():
+    result = solve_ballistic_intercept(
+        earth_radius_m=EARTH_RADIUS,
+        altitude_m=ALTITUDE,
+        node_count=96,
+        rotor_velocity_m_s=12_000.0,
+        mu_m3_s2=MU,
+        earth_rotation_rad_s=REFERENCE_EARTH_ROTATION_RAD_S,
+        minimum_safe_altitude_m=100_000.0,
+        node_stride=1,
+    )
+    assert result.flight_time_s == pytest.approx(39.09794095, abs=1.0e-7)
+    assert result.minimum_altitude_m == pytest.approx(497_607.806, abs=0.01)
+    assert result.required_active_deflection_angle_rad == pytest.approx(
+        0.0407838916, abs=1.0e-10
+    )
+    assert result.required_delta_v_m_s == pytest.approx(489.372781, abs=1.0e-5)

@@ -17,6 +17,11 @@ The test suite covers:
    simultaneous guide forces.
 7. Strict rejection of missing parameters and unitless dimensional inputs.
 8. CSV/Parquet/JSON/manifest production for a bounded L0 sweep.
+9. Static topology tests proving that one or two adjacent failures create only
+   one local bypass leg while unaffected legs retain stride 1.
+10. Global force closure for N = 48, 96, 192, 480, 960, and 1920, including
+    monotonic finite-N convergence to continuous support force.
+11. Runtime and numerical provenance fields in run and sweep manifests.
 
 Run:
 
@@ -52,5 +57,5 @@ bounds.
 - Hyperbolic and Earth-intersecting branches need a broader regression corpus.
 - Finite-duration guide dynamics have only the momentum-vector identity check;
   they are not propagated through a field model.
-- Bypass stream periodicity and phase allocation require an explicit network
-  topology model before engineering interpretation.
+- Bypass stream transients and phase allocation require a control model beyond
+  the static topology now included.
