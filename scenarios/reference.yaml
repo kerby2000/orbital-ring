@@ -1,0 +1,30 @@
+scenario_id: or1-reference-500km-96n-12kms
+
+earth:
+  mean_radius: 6371 km
+  gravitational_parameter: 3.986004418e14 m^3/s^2
+  rotation_rate: 7.2921150e-5 rad/s
+
+ring:
+  altitude: 500 km
+  node_count: 96
+  plane: equatorial
+  direction: prograde
+
+rotor:
+  geocentric_velocity: 12 km/s
+  total_moving_mass: 1000 tonne
+  element_mass: 50 g
+
+magnetic:
+  max_lateral_acceleration: 1000 g_0
+
+safety:
+  minimum_safe_altitude: 100 km
+
+transfer:
+  skip_nodes: 1
+
+model:
+  fidelity: L1
+

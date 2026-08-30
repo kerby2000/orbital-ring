@@ -1,0 +1,93 @@
+{
+  "sweep_id": "or1-initial-one-at-a-time",
+  "sweep_configuration": {
+    "sweep_id": "or1-initial-one-at-a-time",
+    "base_scenario": "../scenarios/reference.yaml",
+    "design": "one_at_a_time",
+    "active_dimensions": [
+      "ring.node_count",
+      "rotor.element_mass",
+      "rotor.geocentric_velocity",
+      "ring.altitude"
+    ],
+    "dimensions": {
+      "ring.node_count": [
+        10,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        192,
+        480,
+        960,
+        1920
+      ],
+      "rotor.element_mass": [
+        "1 g",
+        "10 g",
+        "50 g",
+        "100 g",
+        "500 g"
+      ],
+      "rotor.geocentric_velocity": [
+        "8 km/s",
+        "9 km/s",
+        "10 km/s",
+        "11 km/s",
+        "12 km/s",
+        "15 km/s",
+        "20 km/s",
+        "30 km/s"
+      ],
+      "ring.altitude": [
+        "300 km",
+        "400 km",
+        "500 km",
+        "600 km",
+        "1000 km"
+      ]
+    }
+  },
+  "sweep_configuration_hash": "116d759aa0c6dc3f3e2e2804c453abe33f32b49cb2956561a4c7527a7165a244",
+  "base_scenario_inputs": {
+    "scenario_id": "or1-reference-500km-96n-12kms",
+    "earth": {
+      "mean_radius_m": 6371000.0,
+      "gravitational_parameter_m3_s2": 398600441800000.0,
+      "rotation_rate_rad_s": 7.292115e-05
+    },
+    "ring": {
+      "altitude_m": 500000.0,
+      "node_count": 96,
+      "plane": "equatorial",
+      "direction": "prograde"
+    },
+    "rotor": {
+      "geocentric_velocity_m_s": 12000.0,
+      "total_moving_mass_kg": 1000000.0,
+      "element_mass_kg": 0.05
+    },
+    "magnetic": {
+      "max_lateral_acceleration_m_s2": 9806.65
+    },
+    "safety": {
+      "minimum_safe_altitude_m": 100000.0
+    },
+    "transfer": {
+      "skip_nodes": 1
+    },
+    "model": {
+      "fidelity": "L1"
+    }
+  },
+  "model_version": "0.1.0",
+  "fidelity": "L1",
+  "git_commit": null,
+  "timestamp_utc": "2026-08-30T19:03:35.894451+00:00",
+  "generated_design_points": 30,
+  "warnings": [
+    "L0 guide lengths are large-N scaling approximations."
+  ]
+}

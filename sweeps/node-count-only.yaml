@@ -1,0 +1,8 @@
+sweep_id: or1-node-count-only
+base_scenario: ../scenarios/reference.yaml
+design: one_at_a_time
+active_dimensions:
+  - ring.node_count
+dimensions:
+  ring.node_count: [10, 16, 24, 32, 48, 64, 96, 192, 480, 960, 1920]
+

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "or1-reference-500km-96n-12kms",
+  "input_parameters": {
+    "scenario_id": "or1-reference-500km-96n-12kms",
+    "earth": {
+      "mean_radius_m": 6371000.0,
+      "gravitational_parameter_m3_s2": 398600441800000.0,
+      "rotation_rate_rad_s": 7.292115e-05
+    },
+    "ring": {
+      "altitude_m": 500000.0,
+      "node_count": 96,
+      "plane": "equatorial",
+      "direction": "prograde"
+    },
+    "rotor": {
+      "geocentric_velocity_m_s": 12000.0,
+      "total_moving_mass_kg": 1000000.0,
+      "element_mass_kg": 0.05
+    },
+    "magnetic": {
+      "max_lateral_acceleration_m_s2": 9806.65
+    },
+    "safety": {
+      "minimum_safe_altitude_m": 100000.0
+    },
+    "transfer": {
+      "skip_nodes": 1
+    },
+    "model": {
+      "fidelity": "L1"
+    }
+  },
+  "derived_parameters": {
+    "geocentric_radius_m": 6871000.0,
+    "circular_velocity_m_s": 7616.560806262885,
+    "escape_velocity_m_s": 10771.443590856328,
+    "node_angular_spacing_rad": 0.06544984694978735,
+    "number_of_rotor_elements": 20000000.0
+  },
+  "model_version": "0.1.0",
+  "fidelity": "L1",
+  "git_commit": null,
+  "timestamp_utc": "2026-08-30T19:02:19.350959+00:00",
+  "configuration_hash": "4b6553b0d4295b6df9519d012c1c6d571c827b89867fa644bfd3d9f589a5f023",
+  "warnings": [
+    "Rotor speed is at or above local two-body escape velocity.",
+    "L0 guide lengths are large-N scaling approximations."
+  ]
+}

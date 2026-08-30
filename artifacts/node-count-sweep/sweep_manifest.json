@@ -1,0 +1,66 @@
+{
+  "sweep_id": "or1-node-count-only",
+  "sweep_configuration": {
+    "sweep_id": "or1-node-count-only",
+    "base_scenario": "../scenarios/reference.yaml",
+    "design": "one_at_a_time",
+    "active_dimensions": [
+      "ring.node_count"
+    ],
+    "dimensions": {
+      "ring.node_count": [
+        10,
+        16,
+        24,
+        32,
+        48,
+        64,
+        96,
+        192,
+        480,
+        960,
+        1920
+      ]
+    }
+  },
+  "sweep_configuration_hash": "45d1662e91c261486d9d171bf783e0aa1d41ee1c3187826fb60c8d83fc31c773",
+  "base_scenario_inputs": {
+    "scenario_id": "or1-reference-500km-96n-12kms",
+    "earth": {
+      "mean_radius_m": 6371000.0,
+      "gravitational_parameter_m3_s2": 398600441800000.0,
+      "rotation_rate_rad_s": 7.292115e-05
+    },
+    "ring": {
+      "altitude_m": 500000.0,
+      "node_count": 96,
+      "plane": "equatorial",
+      "direction": "prograde"
+    },
+    "rotor": {
+      "geocentric_velocity_m_s": 12000.0,
+      "total_moving_mass_kg": 1000000.0,
+      "element_mass_kg": 0.05
+    },
+    "magnetic": {
+      "max_lateral_acceleration_m_s2": 9806.65
+    },
+    "safety": {
+      "minimum_safe_altitude_m": 100000.0
+    },
+    "transfer": {
+      "skip_nodes": 1
+    },
+    "model": {
+      "fidelity": "L1"
+    }
+  },
+  "model_version": "0.1.0",
+  "fidelity": "L1",
+  "git_commit": null,
+  "timestamp_utc": "2026-08-30T19:03:16.171883+00:00",
+  "generated_design_points": 12,
+  "warnings": [
+    "L0 guide lengths are large-N scaling approximations."
+  ]
+}

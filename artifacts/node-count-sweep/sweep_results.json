@@ -1,0 +1,1166 @@
+[
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 96,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.06544984694978735,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:10.872039+00:00",
+      "configuration_hash": "4b6553b0d4295b6df9519d012c1c6d571c827b89867fa644bfd3d9f589a5f023",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 573.8862441994584,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.06544984694978735,
+      "surface_arc_separation_m": 449705.8983919889,
+      "flight_time_s": 39.097940951983226,
+      "outgoing_velocity_m_s": [
+        -244.68639052455407,
+        11997.505097739782
+      ],
+      "incoming_velocity_m_s": [
+        -574.6877131003911,
+        11986.231018648748
+      ],
+      "required_active_deflection_angle_rad": 0.04078389156466456,
+      "required_delta_v_m_s": 489.37278103135577,
+      "minimum_altitude_m": 497607.80640000757,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 3.588868611937641e-07,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3753.40233139039,
+      "element_passage_frequency_per_node_hz": 5328.49884829461,
+      "mean_element_spacing_m": 2.2520413988342343,
+      "elements_simultaneously_in_guide": 265.92190307347045,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 598.86713457824,
+      "mass_flow_per_node_kg_s": 266.42494241473054,
+      "average_node_reaction_force_mdot_n": 130381.1150056155,
+      "average_node_reaction_force_summed_n": 130381.11500563426,
+      "force_consistency_relative_error": 1.4386607085354572e-13
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 10,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.6283185307179586,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:11.227910+00:00",
+      "configuration_hash": "236fabac81572606f83d114ae0b3ad612f7a280ac3f647d311f77c4917c581d4",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 5509.3079443148,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.6283185307179586,
+      "surface_arc_separation_m": 4317176.624563093,
+      "flight_time_s": 366.32583615887427,
+      "outgoing_velocity_m_s": [
+        -2325.51655086321,
+        11772.50919607461
+      ],
+      "incoming_velocity_m_s": [
+        -5327.424689727477,
+        10752.60648286182
+      ],
+      "required_active_deflection_angle_rad": 0.3900540463311224,
+      "required_delta_v_m_s": 4651.0331017264125,
+      "minimum_altitude_m": 282814.9895899063,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 3.357931296773245e-09,
+      "solver_evaluations": 12
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3663.2583615887424,
+      "element_passage_frequency_per_node_hz": 5459.620377779216,
+      "mean_element_spacing_m": 2.1979550169532454,
+      "elements_simultaneously_in_guide": 2605.8403468478646,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 5727.519863733449,
+      "mass_flow_per_node_kg_s": 272.9810188889608,
+      "average_node_reaction_force_mdot_n": 1269643.7549955598,
+      "average_node_reaction_force_summed_n": 1269643.7549955598,
+      "force_consistency_relative_error": 0.0
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 16,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.39269908169872414,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:11.938584+00:00",
+      "configuration_hash": "1ac5d384b5aba773f585fee1391f9cd0c031fdcfe80800d37a61369465c84e97",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 3443.31746519675,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.39269908169872414,
+      "surface_arc_separation_m": 2698235.3903519334,
+      "flight_time_s": 232.40413336818315,
+      "outgoing_velocity_m_s": [
+        -1462.4455851986652,
+        11910.552166475445
+      ],
+      "incoming_velocity_m_s": [
+        -3402.347405031652,
+        11507.564126932952
+      ],
+      "required_active_deflection_angle_rad": 0.2443483561879833,
+      "required_delta_v_m_s": 2924.8911703973395,
+      "minimum_altitude_m": 414376.5323041864,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 1.9199706733309015e-09,
+      "solver_evaluations": 12
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3718.4661338909305,
+      "element_passage_frequency_per_node_hz": 5378.561826263667,
+      "mean_element_spacing_m": 2.2310796803345583,
+      "elements_simultaneously_in_guide": 1608.1855568247645,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 3587.9901180392485,
+      "mass_flow_per_node_kg_s": 268.92809131318336,
+      "average_node_reaction_force_mdot_n": 786585.3997537395,
+      "average_node_reaction_force_summed_n": 786585.3997537405,
+      "force_consistency_relative_error": 1.332007810938816e-15
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 24,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.2617993877991494,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:12.466125+00:00",
+      "configuration_hash": "d0df4f36e43e2f0f04e2671c4bb529c87d3cc14597d74a0d68d64af4c56a0ee0",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 2295.5449767978334,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.2617993877991494,
+      "surface_arc_separation_m": 1798823.5935679555,
+      "flight_time_s": 155.7658071282479,
+      "outgoing_velocity_m_s": [
+        -977.1206456230766,
+        11960.151974113754
+      ],
+      "incoming_velocity_m_s": [
+        -2285.6417645194647,
+        11780.31585842605
+      ],
+      "required_active_deflection_angle_rad": 0.16303394149437098,
+      "required_delta_v_m_s": 1954.2412912461805,
+      "minimum_altitude_m": 461819.5335336663,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 1.9199706733309015e-09,
+      "solver_evaluations": 12
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3738.3793710779496,
+      "element_passage_frequency_per_node_hz": 5349.911824019366,
+      "mean_element_spacing_m": 2.24302762264677,
+      "elements_simultaneously_in_guide": 1067.296837942274,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 2393.976289068073,
+      "mass_flow_per_node_kg_s": 267.4955912009683,
+      "average_node_reaction_force_mdot_n": 522750.92955124076,
+      "average_node_reaction_force_summed_n": 522750.92955124256,
+      "force_consistency_relative_error": 3.451811151950539e-15
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 32,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.19634954084936207,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:13.041137+00:00",
+      "configuration_hash": "84a6a3a900160437284d5cf628621f91529c6e39ac26176a8f64826d8d0a1113",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 1721.658732598375,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.19634954084936207,
+      "surface_arc_separation_m": 1349117.6951759667,
+      "flight_time_s": 117.04314568930981,
+      "outgoing_velocity_m_s": [
+        -733.4086248769312,
+        11977.567022937343
+      ],
+      "incoming_velocity_m_s": [
+        -1718.8153782921138,
+        11876.265140832218
+      ],
+      "required_active_deflection_angle_rad": 0.1223109969765797,
+      "required_delta_v_m_s": 1466.817249753852,
+      "minimum_altitude_m": 478498.67326671164,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 1.041250292910165e-09,
+      "solver_evaluations": 12
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3745.380662057914,
+      "element_passage_frequency_per_node_hz": 5339.911161129059,
+      "mean_element_spacing_m": 2.2472283972347484,
+      "elements_simultaneously_in_guide": 799.208526317216,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 1796.0040956521825,
+      "mass_flow_per_node_kg_s": 266.995558056453,
+      "average_node_reaction_force_mdot_n": 391633.69016486127,
+      "average_node_reaction_force_summed_n": 391633.6901648626,
+      "force_consistency_relative_error": 3.418439819225403e-15
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 48,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.1308996938995747,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:13.467805+00:00",
+      "configuration_hash": "84c99a20098f37f3ce3363174de402707402bbef62d62bba9c669f89e142e2a2",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 1147.7724883989167,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.1308996938995747,
+      "surface_arc_separation_m": 899411.7967839778,
+      "flight_time_s": 78.13315993954,
+      "outgoing_velocity_m_s": [
+        -489.21004053943454,
+        11990.02391725035
+      ],
+      "incoming_velocity_m_s": [
+        -1148.0627484304568,
+        11944.95508261042
+      ],
+      "required_active_deflection_angle_rad": 0.08155760872812959,
+      "required_delta_v_m_s": 978.4200812187137,
+      "minimum_altitude_m": 490435.9646866517,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 7.768418156022321e-06,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3750.3916770979195,
+      "element_passage_frequency_per_node_hz": 5332.776339637183,
+      "mean_element_spacing_m": 2.2502350062587517,
+      "elements_simultaneously_in_guide": 532.2043545668579,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 1197.5848691296885,
+      "mass_flow_per_node_kg_s": 266.6388169818592,
+      "average_node_reaction_force_mdot_n": 260884.7729674524,
+      "average_node_reaction_force_summed_n": 260884.7729674988,
+      "force_consistency_relative_error": 1.779352970680024e-13
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 64,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.09817477042468103,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:13.968004+00:00",
+      "configuration_hash": "eb7babdabf3ad591622005f138d5e836f8b2d24ca402b7b777dbeb3beeffa08d",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 860.8293662991875,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.09817477042468103,
+      "surface_arc_separation_m": 674558.8475879834,
+      "flight_time_s": 58.62730504795005,
+      "outgoing_velocity_m_s": [
+        -366.97871803917366,
+        11994.387296586114
+      ],
+      "incoming_velocity_m_s": [
+        -861.6212771697915,
+        11969.027060489743
+      ],
+      "required_active_deflection_angle_rad": 0.06117265730237612,
+      "required_delta_v_m_s": 733.9574360652712,
+      "minimum_altitude_m": 494618.6753805876,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 1.0523582705592987e-06,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3752.1475230688034,
+      "element_passage_frequency_per_node_hz": 5330.2808263899005,
+      "mean_element_spacing_m": 2.251288513841282,
+      "elements_simultaneously_in_guide": 398.9955089473069,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 898.2540063673285,
+      "mass_flow_per_node_kg_s": 266.51404131949505,
+      "average_node_reaction_force_mdot_n": 195609.96244225034,
+      "average_node_reaction_force_summed_n": 195609.96244225258,
+      "force_consistency_relative_error": 1.1456445863947627e-14
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 96,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.06544984694978735,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:14.423684+00:00",
+      "configuration_hash": "4b6553b0d4295b6df9519d012c1c6d571c827b89867fa644bfd3d9f589a5f023",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 573.8862441994584,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.06544984694978735,
+      "surface_arc_separation_m": 449705.8983919889,
+      "flight_time_s": 39.097940951983226,
+      "outgoing_velocity_m_s": [
+        -244.68639052455407,
+        11997.505097739782
+      ],
+      "incoming_velocity_m_s": [
+        -574.6877131003911,
+        11986.231018648748
+      ],
+      "required_active_deflection_angle_rad": 0.04078389156466456,
+      "required_delta_v_m_s": 489.37278103135577,
+      "minimum_altitude_m": 497607.80640000757,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 3.588868611937641e-07,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3753.40233139039,
+      "element_passage_frequency_per_node_hz": 5328.49884829461,
+      "mean_element_spacing_m": 2.2520413988342343,
+      "elements_simultaneously_in_guide": 265.92190307347045,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 598.86713457824,
+      "mass_flow_per_node_kg_s": 266.42494241473054,
+      "average_node_reaction_force_mdot_n": 130381.1150056155,
+      "average_node_reaction_force_summed_n": 130381.11500563426,
+      "force_consistency_relative_error": 1.4386607085354572e-13
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 192,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.032724923474893676,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:14.915207+00:00",
+      "configuration_hash": "6ee6afd1a09230a952ec6891ee68aabf3216fdf1ca13e8a0bb4ebe69b53808b7",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 286.9431220997292,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.032724923474893676,
+      "surface_arc_separation_m": 224852.94919599444,
+      "flight_time_s": 19.552893070633733,
+      "outgoing_velocity_m_s": [
+        -122.35337140353478,
+        11999.376219308493
+      ],
+      "incoming_velocity_m_s": [
+        -287.42593349108967,
+        11996.557270015295
+      ],
+      "required_active_deflection_angle_rad": 0.02039258191569,
+      "required_delta_v_m_s": 244.70674280730697,
+      "minimum_altitude_m": 499401.87751504406,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 7.354981929032586e-09,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3754.155469561677,
+      "element_passage_frequency_per_node_hz": 5327.429873951153,
+      "mean_element_spacing_m": 2.252493281737006,
+      "elements_simultaneously_in_guide": 132.93842456452666,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 299.4429082162981,
+      "mass_flow_per_node_kg_s": 266.3714936975577,
+      "average_node_reaction_force_mdot_n": 65182.90059944644,
+      "average_node_reaction_force_summed_n": 65182.900599445304,
+      "force_consistency_relative_error": 1.7413299766875574e-14
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 480,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.01308996938995747,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:15.319398+00:00",
+      "configuration_hash": "18a7486b1f97c9146ee6221e275db7782df014e8d2b3a9c940a85217c9a1a046",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 114.77724883989167,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.01308996938995747,
+      "surface_arc_separation_m": 89941.17967839778,
+      "flight_time_s": 7.821596629764523,
+      "outgoing_velocity_m_s": [
+        -48.94248842909888,
+        11999.900192619369
+      ],
+      "incoming_velocity_m_s": [
+        -114.97956700606848,
+        11999.449141488576
+      ],
+      "required_active_deflection_angle_rad": 0.008157104019874992,
+      "required_delta_v_m_s": 97.88497685896346,
+      "minimum_altitude_m": 499904.2970829746,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 2.7941193021850175e-09,
+      "solver_evaluations": 9
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3754.3663822869707,
+      "element_passage_frequency_per_node_hz": 5327.130589694075,
+      "mean_element_spacing_m": 2.2526198293721826,
+      "elements_simultaneously_in_guide": 53.17284701412929,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 119.77820956820108,
+      "mass_flow_per_node_kg_s": 266.35652948470374,
+      "average_node_reaction_force_mdot_n": 26072.30272484404,
+      "average_node_reaction_force_summed_n": 26072.30272475279,
+      "force_consistency_relative_error": 3.499937208512421e-12
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 960,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.006544984694978735,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:15.762890+00:00",
+      "configuration_hash": "40b08de556b1627c0cd2a6f7ea25e12161fd1a2baf9ba0a869c3b101f80ff214",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 57.388624419945835,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.006544984694978735,
+      "surface_arc_separation_m": 44970.58983919889,
+      "flight_time_s": 3.910829687244306,
+      "outgoing_velocity_m_s": [
+        -24.47127093525629,
+        11999.975048178176
+      ],
+      "incoming_velocity_m_s": [
+        -57.49038538088308,
+        11999.86228470905
+      ],
+      "required_active_deflection_angle_rad": 0.004078557108993352,
+      "required_delta_v_m_s": 48.942651384724556,
+      "minimum_altitude_m": 499976.07425915357,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 0.00027319366403417885,
+      "solver_evaluations": 6
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3754.3964997545336,
+      "element_passage_frequency_per_node_hz": 5327.087855879799,
+      "mean_element_spacing_m": 2.2526378998527203,
+      "elements_simultaneously_in_guide": 26.586243471314717,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 59.88917965819548,
+      "mass_flow_per_node_kg_s": 266.3543927939899,
+      "average_node_reaction_force_mdot_n": 13036.090191306239,
+      "average_node_reaction_force_summed_n": 13036.090191456035,
+      "force_consistency_relative_error": 1.1490837679964976e-11
+    }
+  },
+  {
+    "manifest": {
+      "scenario_id": "or1-reference-500km-96n-12kms",
+      "input_parameters": {
+        "scenario_id": "or1-reference-500km-96n-12kms",
+        "earth": {
+          "mean_radius_m": 6371000.0,
+          "gravitational_parameter_m3_s2": 398600441800000.0,
+          "rotation_rate_rad_s": 7.292115e-05
+        },
+        "ring": {
+          "altitude_m": 500000.0,
+          "node_count": 1920,
+          "plane": "equatorial",
+          "direction": "prograde"
+        },
+        "rotor": {
+          "geocentric_velocity_m_s": 12000.0,
+          "total_moving_mass_kg": 1000000.0,
+          "element_mass_kg": 0.05
+        },
+        "magnetic": {
+          "max_lateral_acceleration_m_s2": 9806.65
+        },
+        "safety": {
+          "minimum_safe_altitude_m": 100000.0
+        },
+        "transfer": {
+          "skip_nodes": 1
+        },
+        "model": {
+          "fidelity": "L1"
+        }
+      },
+      "derived_parameters": {
+        "geocentric_radius_m": 6871000.0,
+        "circular_velocity_m_s": 7616.560806262885,
+        "escape_velocity_m_s": 10771.443590856328,
+        "node_angular_spacing_rad": 0.0032724923474893677,
+        "number_of_rotor_elements": 20000000.0
+      },
+      "model_version": "0.1.0",
+      "fidelity": "L1",
+      "git_commit": null,
+      "timestamp_utc": "2026-08-30T19:03:16.058956+00:00",
+      "configuration_hash": "b8b42c62ef0d55e5574869ebd89bf7d07c70ab6be42ff3f62ffcb541a284eb8f",
+      "warnings": [
+        "Rotor speed is at or above local two-body escape velocity.",
+        "L0 guide lengths are large-N scaling approximations."
+      ]
+    },
+    "closed_form": {
+      "gravity_m_s2": 8.443021178212767,
+      "circular_velocity_m_s": 7616.560806262885,
+      "escape_velocity_m_s": 10771.443590856328,
+      "continuous_support_acceleration_m_s2": 12.514626907946454,
+      "magnetic_turning_angle_rad": 3.7519343577857454,
+      "magnetic_curvature_radius_m": 14683.913466882168,
+      "total_guide_length_m": 55093.079443148,
+      "guide_length_per_node_m": 28.694312209972917,
+      "approximation": "large-N L0 scaling"
+    },
+    "ballistic": {
+      "node_angular_spacing_rad": 0.0032724923474893677,
+      "surface_arc_separation_m": 22485.294919599444,
+      "flight_time_s": 1.955418772552636,
+      "outgoing_velocity_m_s": [
+        -12.235658925651672,
+        11999.99376202549
+      ],
+      "incoming_velocity_m_s": [
+        -28.745288106124605,
+        11999.965571115094
+      ],
+      "required_active_deflection_angle_rad": 0.002039279187233255,
+      "required_delta_v_m_s": 24.471346005872874,
+      "minimum_altitude_m": 499994.0185443964,
+      "intersects_earth": false,
+      "violates_minimum_safe_altitude": false,
+      "skip_nodes": 1,
+      "terminal_position_error_m": 3.4756831598016215e-05,
+      "solver_evaluations": 6
+    },
+    "rotor_stream": {
+      "number_of_elements": 20000000.0,
+      "circulation_period_s": 3754.404043301061,
+      "element_passage_frequency_per_node_hz": 5327.077152414046,
+      "mean_element_spacing_m": 2.2526424259806364,
+      "elements_simultaneously_in_guide": 13.293099150927699,
+      "kinetic_energy_per_element_j": 3600000.0,
+      "active_guide_length_per_node_m": 29.944599120146915,
+      "mass_flow_per_node_kg_s": 266.35385762070234,
+      "average_node_reaction_force_mdot_n": 6518.037409835207,
+      "average_node_reaction_force_summed_n": 6518.0374099929995,
+      "force_consistency_relative_error": 2.4208634188287613e-11
+    }
+  }
+]

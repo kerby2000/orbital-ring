@@ -1,0 +1,19 @@
+sweep_id: or1-initial-one-at-a-time
+base_scenario: ../scenarios/reference.yaml
+
+# one_at_a_time runs the baseline plus each configured value independently.
+# Change active_dimensions to select only the ranges intended for a run.
+# A Cartesian design is rejected unless the CLI receives --allow-cartesian.
+design: one_at_a_time
+active_dimensions:
+  - ring.node_count
+  - rotor.element_mass
+  - rotor.geocentric_velocity
+  - ring.altitude
+
+dimensions:
+  ring.node_count: [10, 16, 24, 32, 48, 64, 96, 192, 480, 960, 1920]
+  rotor.element_mass: [1 g, 10 g, 50 g, 100 g, 500 g]
+  rotor.geocentric_velocity: [8 km/s, 9 km/s, 10 km/s, 11 km/s, 12 km/s, 15 km/s, 20 km/s, 30 km/s]
+  ring.altitude: [300 km, 400 km, 500 km, 600 km, 1000 km]
+
