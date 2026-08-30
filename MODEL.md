@@ -43,27 +43,50 @@ geocentric speed \(v\) is
 a_{mag}=\frac{v^2}{r}-g(r).
 \]
 
-In the many-node limit, the magnetic share of the full turning angle is
+The previously reported quantity
 
 \[
-\Theta_{mag}=2\pi\left(1-\frac{v_{orb}^2}{v^2}\right).
+\Theta_{mag,inertial-period}
+=2\pi\left(1-\frac{v_{orb}^2}{v^2}\right)
 \]
 
-Given allowed lateral magnetic acceleration \(a_{deflect}>0\), the associated
-curvature radius and active guide-length scalings are
+is the magnetic inertial velocity-direction change accumulated over the time
+\(2\pi r/v\). It is retained under that explicit name; it is not the magnetic
+turn accumulated during one circuit relative to Earth-fixed nodes.
+
+For a prograde Earth-fixed ring, define relative tangential speed and circuit
+period
 
 \[
-\rho_{mag}=\frac{v^2}{a_{deflect}},
+u=v-\omega_E r, \qquad
+T_{rel}=\frac{2\pi r}{u}.
 \]
+
+The total inertial velocity-direction change supplied magnetically during that
+Earth-relative circuit is
 
 \[
-L_{mag,total}=\rho_{mag}\Theta_{mag}, \qquad
-L_{mag,node}=\frac{L_{mag,total}}{N}.
+\Theta_{mag,EF}
+=\frac{a_{mag}}{v}T_{rel}
+=\frac{2\pi r a_{mag}}{vu}.
 \]
 
-These guide lengths are **large-N L0 scaling approximations**, not a finite-node
-magnet design. When \(v\leq v_{orb}\), the signed magnetic support/turning
-interpretation changes; the code preserves the equation and emits a warning.
+For allowed lateral acceleration \(a_{deflect}>0\), the fraction of the
+Earth-fixed circumference that must be active is \(a_{mag}/a_{deflect}\).
+Therefore the large-N physical guide length fixed to Earth is
+
+\[
+L_{guide,total,EF}
+=2\pi r\frac{a_{mag}}{a_{deflect}}, \qquad
+L_{guide,node,EF}=\frac{L_{guide,total,EF}}{N}.
+\]
+
+The inertial magnetic curvature radius \(v^2/a_{deflect}\) remains a useful
+turning quantity, but multiplying it by \(\Theta_{mag,EF}\) would produce an
+inertial path length rather than Earth-fixed guide length. The Earth-fixed
+length above is a **large-N L0 kinematic scaling approximation**, not a finite
+field or magnet design. When \(v\leq v_{orb}\), the signed support/turning
+interpretation changes and the code emits a warning.
 
 ## L1: rotating-node numerical ballistic transfer
 
@@ -128,6 +151,38 @@ Minimum radius is found on the dense numerical solution over
 \([0,t_f]\). The code flags \(r_{min}\leq R_E\) and a configurable
 \(r_{min}<R_E+h_{safe}\).
 
+### Earth-fixed guide kinematics
+
+The guide interaction is separated into time, inertial path length, and
+physical Earth-fixed length. Under ideal constant normal acceleration,
+
+\[
+t_{guide}=\frac{v\delta}{a_{deflect}}, \qquad
+L_{turn,inertial}=v t_{guide}=\frac{v^2\delta}{a_{deflect}}.
+\]
+
+The second quantity is the rotor's inertial path through the turn and is not
+the length of guide fixed to a node. At local radius \(r\), the guide inertial
+velocity is
+
+\[
+\mathbf v_g=\boldsymbol\omega_E\times\mathbf r,
+\qquad
+\mathbf u(t)=\mathbf v(t)-\mathbf v_g.
+\]
+
+OR-1.1B rotates \(\mathbf v(t)\) at constant magnitude from the incoming to
+outgoing local velocity at constant angular rate and evaluates
+
+\[
+L_{guide,EF}=\int_0^{t_{guide}}\lVert\mathbf u(t)\rVert\,dt
+\]
+
+with deterministic order-32 Gauss-Legendre quadrature. Earth rotation of the
+local frame and gravity during the roughly 0.05--0.5 s interaction are omitted.
+The result is an Earth-fixed kinematic physical-guide estimate, not a finite
+field magnet simulation.
+
 ### Failure-route topology
 
 Node stride describes one ballistic leg, not the complete network. A static
@@ -141,6 +196,14 @@ The approximate static route period is the sum of the flight times of the
 normal and bypass legs actually in the route. Active-node passage frequency is
 \(n_e/T_{route}\), while failed-node frequency is zero. This is distinct from
 the invalid interpretation of a homogeneous stride-two ring.
+
+Route legs and active-node transitions are separate. At each active node, the
+arrival velocity is taken from its incoming leg's ballistic primitive and the
+departure velocity from its outgoing leg's primitive, both rotated into local
+radial/tangential coordinates. A one-node failure therefore produces mixed
+stride 1-to-2 and 2-to-1 transitions at the two bypass endpoints; it does not
+apply the periodic stride-2-to-2 turn at either guide. Two adjacent failures
+similarly produce mixed stride 1-to-3 and 3-to-1 transitions.
 
 ## Rotor-stream scaling
 
@@ -159,19 +222,25 @@ node is
 f_{node}=\frac{n_e}{kT_{circ}}.
 \]
 
-The mean along-stream element spacing and per-element kinetic energy are
+The mean inertial along-stream element spacing and per-element kinetic energy
+are
 
 \[
-d=\frac{vT_{circ}}{n_e}, \qquad
+d_{inertial}=\frac{vT_{circ}}{n_e}, \qquad
 E_k=\frac12mv^2.
 \]
 
-For active turn angle \(\delta\) at constant allowed lateral acceleration
-\(a_{deflect}\):
+The representative guide-frame spacing at an active node is
 
 \[
-L_{guide}=\frac{v^2\delta}{a_{deflect}}, \qquad
-n_{guide}=f_{node}\frac{L_{guide}}{v}.
+d_{guide}=\frac{\overline{\lVert\mathbf u\rVert}}{f_{node}}.
+\]
+
+Guide occupancy uses interaction time directly, rather than inferring it from
+an inertial path mislabeled as physical length:
+
+\[
+n_{guide}=f_{node}t_{guide}.
 \]
 
 The momentum-flow reaction magnitude is

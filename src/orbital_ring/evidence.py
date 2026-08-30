@@ -20,6 +20,7 @@ from orbital_ring.rotor import evaluate_rotor_stream
 
 FORCE_CLOSURE_NODE_COUNTS = (48, 96, 192, 480, 960, 1920)
 DESIGN_SPACE_NODE_COUNTS = (10, 16, 24, 32, 48, 64, 96, 192, 480, 960, 1920)
+GUIDE_CONVERGENCE_NODE_COUNTS = (48, 96, 192, 480, 960, 1920)
 BYPASS_NODE_COUNTS = (48, 96, 192, 480, 960)
 ROTOR_ELEMENT_MASSES_KG = (1.0, 0.5, 0.1, 0.05, 0.02, 0.01, 0.005, 0.001)
 
@@ -88,7 +89,7 @@ def node_count_l1_table(
         ballistic = result.ballistic
         if ballistic is None:
             raise ValueError("node-count L1 evidence requires L1 fidelity")
-        guide_per_node = result.rotor_stream.active_guide_length_per_node_m
+        guide_per_node = result.rotor_stream.physical_guide_length_estimate_m
         rows.append(
             {
                 "node_count": node_count,
@@ -97,8 +98,20 @@ def node_count_l1_table(
                 "active_deflection_angle_rad": (
                     ballistic.required_active_deflection_angle_rad
                 ),
-                "l1_guide_length_per_node_m": guide_per_node,
-                "total_l1_active_guide_length_m": node_count * guide_per_node,
+                "l1_physical_guide_length_per_node_m": guide_per_node,
+                "total_l1_physical_guide_length_m": node_count * guide_per_node,
+                "ideal_interaction_time_s": (
+                    result.rotor_stream.ideal_interaction_time_s
+                ),
+                "guide_relative_entry_speed_m_s": (
+                    result.rotor_stream.earth_fixed_guide_relative_entry_speed_m_s
+                ),
+                "guide_relative_exit_speed_m_s": (
+                    result.rotor_stream.earth_fixed_guide_relative_exit_speed_m_s
+                ),
+                "inertial_turn_path_length_m": (
+                    result.rotor_stream.inertial_turn_path_length_m
+                ),
                 "node_delta_v_m_s": ballistic.required_delta_v_m_s,
                 "average_node_reaction_force_n": (
                     result.rotor_stream.average_node_reaction_force_mdot_n
@@ -112,7 +125,30 @@ def node_count_l1_table(
     return pd.DataFrame(rows)
 
 
-def bypass_table(
+def physical_guide_convergence_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = GUIDE_CONVERGENCE_NODE_COUNTS,
+) -> pd.DataFrame:
+    rows: list[dict[str, float | int]] = []
+    for node_count in node_counts:
+        result = evaluate_scenario(_direct_scenario(scenario, node_count))
+        physical_per_node = result.rotor_stream.physical_guide_length_estimate_m
+        l1_total = node_count * physical_per_node
+        l0_total = result.closed_form.total_physical_guide_length_m
+        rows.append(
+            {
+                "node_count": node_count,
+                "l1_physical_guide_length_per_node_m": physical_per_node,
+                "l1_total_physical_guide_length_m": l1_total,
+                "l0_large_n_physical_guide_length_m": l0_total,
+                "signed_relative_error": (l1_total - l0_total) / l0_total,
+                "absolute_relative_error": abs(l1_total - l0_total) / abs(l0_total),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def bypass_leg_table(
     scenario: Scenario,
     node_counts: Iterable[int] = BYPASS_NODE_COUNTS,
 ) -> pd.DataFrame:
@@ -131,11 +167,6 @@ def bypass_table(
                 raise AssertionError("adjacent failure case must produce one bypass leg")
             bypass = route.bypass_legs[0]
             ballistic = bypass.ballistic
-            guide_length = (
-                scenario.rotor.geocentric_velocity_m_s**2
-                * ballistic.required_active_deflection_angle_rad
-                / scenario.magnetic.max_lateral_acceleration_m_s2
-            )
             rows.append(
                 {
                     "node_count": node_count,
@@ -149,11 +180,18 @@ def bypass_table(
                     "bypassed_node_count": len(bypass.bypassed_nodes),
                     "local_bypass_flight_time_s": ballistic.flight_time_s,
                     "local_bypass_minimum_altitude_m": ballistic.minimum_altitude_m,
-                    "local_bypass_deflection_angle_rad": (
-                        ballistic.required_active_deflection_angle_rad
+                    "departure_radial_velocity_m_s": (
+                        ballistic.outgoing_velocity_m_s[0]
                     ),
-                    "local_bypass_guide_length_m": guide_length,
-                    "local_bypass_delta_v_m_s": ballistic.required_delta_v_m_s,
+                    "departure_tangential_velocity_m_s": (
+                        ballistic.outgoing_velocity_m_s[1]
+                    ),
+                    "arrival_inertial_velocity_x_m_s": (
+                        ballistic.incoming_velocity_m_s[0]
+                    ),
+                    "arrival_inertial_velocity_y_m_s": (
+                        ballistic.incoming_velocity_m_s[1]
+                    ),
                     "route_circulation_period_s": route.route_circulation_period_s,
                     "normal_reference_circulation_period_s": (
                         route.normal_reference_circulation_period_s
@@ -173,6 +211,63 @@ def bypass_table(
     return pd.DataFrame(rows)
 
 
+def failure_transition_table(
+    scenario: Scenario,
+    node_counts: Iterable[int] = BYPASS_NODE_COUNTS,
+) -> pd.DataFrame:
+    """Report actual mixed-stride guide transitions at active bypass endpoints."""
+
+    rows: list[dict[str, object]] = []
+    for node_count in node_counts:
+        sized = _direct_scenario(scenario, node_count)
+        for failure_count, failure_label in (
+            (1, "one_failed_node"),
+            (2, "two_adjacent_failed_nodes"),
+        ):
+            failed_nodes = tuple(range(1, 1 + failure_count))
+            route = evaluate_failure_route(sized, failed_nodes)
+            affected = [
+                transition
+                for transition in route.node_transitions
+                if transition.is_failure_related
+            ]
+            if len(affected) != 2:
+                raise AssertionError("one adjacent failure cluster must affect two nodes")
+            for transition in affected:
+                rows.append(
+                    {
+                        "node_count": node_count,
+                        "failure_case": failure_label,
+                        "failed_nodes": ",".join(str(node) for node in failed_nodes),
+                        "transition_node": transition.node_index,
+                        "incoming_leg_stride": transition.incoming_leg_stride,
+                        "outgoing_leg_stride": transition.outgoing_leg_stride,
+                        "actual_transition_angle_rad": (
+                            transition.actual_transition_angle_rad
+                        ),
+                        "actual_transition_delta_v_m_s": (
+                            transition.actual_transition_delta_v_m_s
+                        ),
+                        "ideal_interaction_time_s": (
+                            transition.ideal_interaction_time_s
+                        ),
+                        "guide_relative_entry_speed_m_s": (
+                            transition.guide_relative_entry_speed_m_s
+                        ),
+                        "guide_relative_exit_speed_m_s": (
+                            transition.guide_relative_exit_speed_m_s
+                        ),
+                        "physical_guide_length_estimate_m": (
+                            transition.physical_guide_length_estimate_m
+                        ),
+                        "inertial_turn_path_length_m": (
+                            transition.inertial_turn_path_length_m
+                        ),
+                    }
+                )
+    return pd.DataFrame(rows)
+
+
 def rotor_element_scaling_table(
     scenario: Scenario,
     element_masses_kg: Iterable[float] = ROTOR_ELEMENT_MASSES_KG,
@@ -181,6 +276,14 @@ def rotor_element_scaling_table(
     ballistic = reference.ballistic
     if ballistic is None:
         raise ValueError("rotor-element evidence requires L1 fidelity")
+    target_angle = (
+        ballistic.node_angular_spacing_rad
+        + scenario.earth.rotation_rate_rad_s * ballistic.flight_time_s
+    )
+    incoming_local = rotate_vector(
+        np.asarray(ballistic.incoming_velocity_m_s), -target_angle
+    )
+    outgoing_local = ballistic.outgoing_velocity_m_s
     rows: list[dict[str, float]] = []
     for element_mass_kg in element_masses_kg:
         rotor = evaluate_rotor_stream(
@@ -190,8 +293,14 @@ def rotor_element_scaling_table(
             node_count=96,
             node_stride=1,
             flight_time_s=ballistic.flight_time_s,
-            active_deflection_angle_rad=ballistic.required_active_deflection_angle_rad,
-            required_delta_v_m_s=ballistic.required_delta_v_m_s,
+            incoming_local_velocity_m_s=(
+                float(incoming_local[0]),
+                float(incoming_local[1]),
+            ),
+            outgoing_local_velocity_m_s=outgoing_local,
+            guide_tangential_speed_m_s=(
+                scenario.earth.rotation_rate_rad_s * scenario.radius_m
+            ),
             allowed_lateral_acceleration_m_s2=(
                 scenario.magnetic.max_lateral_acceleration_m_s2
             ),
@@ -204,7 +313,13 @@ def rotor_element_scaling_table(
                 "passage_frequency_per_node_hz": (
                     rotor.element_passage_frequency_per_node_hz
                 ),
-                "mean_element_spacing_m": rotor.mean_element_spacing_m,
+                "mean_inertial_element_spacing_m": (
+                    rotor.mean_inertial_element_spacing_m
+                ),
+                "mean_guide_frame_element_spacing_m": (
+                    rotor.mean_guide_frame_element_spacing_m
+                ),
+                "ideal_interaction_time_s": rotor.ideal_interaction_time_s,
                 "simultaneous_elements_in_guide": (
                     rotor.elements_simultaneously_in_guide
                 ),
@@ -258,14 +373,19 @@ def generate_hardening_evidence(
 
     closure = force_closure_table(scenario)
     nodes = node_count_l1_table(scenario)
-    bypasses = bypass_table(scenario)
+    guide_convergence = physical_guide_convergence_table(scenario)
+    bypass_legs = bypass_leg_table(scenario)
+    transitions = failure_transition_table(scenario)
     elements = rotor_element_scaling_table(scenario)
     tables = {
         "global-force-closure.csv": closure,
+        "physical-guide-convergence.csv": guide_convergence,
         "node-count-l1.csv": nodes,
-        "failure-bypasses.csv": bypasses,
+        "failure-bypass-legs.csv": bypass_legs,
+        "failure-node-transitions.csv": transitions,
         "rotor-element-scaling.csv": elements,
     }
+    (output / "failure-bypasses.csv").unlink(missing_ok=True)
     for filename, frame in tables.items():
         frame.to_csv(output / filename, index=False)
 
@@ -303,9 +423,20 @@ show the finite-node convergence.
 
 {dataframe_to_markdown(nodes)}
 
-## Local failed-node bypasses
+## Physical Earth-fixed guide convergence
 
-{dataframe_to_markdown(bypasses)}
+{dataframe_to_markdown(guide_convergence)}
+
+## Free-flight failed-node bypass legs
+
+{dataframe_to_markdown(bypass_legs)}
+
+Periodic stride-k turn values are not guide requirements for these local
+failure cases. The actual active-node transitions are reported separately.
+
+## Failure-related active-node transitions
+
+{dataframe_to_markdown(transitions)}
 
 ## Rotor-element scaling at fixed total mass
 

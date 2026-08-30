@@ -42,6 +42,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Verify clean evidence source checkout
+        run: test -z "$(git status --porcelain)"
+
       - name: Run reference scenario
         run: orbital-ring run scenarios/reference.yaml --output ci-evidence/reference-run
 

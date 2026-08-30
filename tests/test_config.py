@@ -38,6 +38,8 @@ def test_reference_scenario_has_traceability_fields():
     assert manifest.integrator_atol == 1.0e-7
     assert manifest.terminal_position_tolerance_m == 0.25
     assert manifest.maximum_solver_evaluations == 120
+    assert "Earth-fixed guide velocity" in manifest.guide_kinematics_model
+    assert manifest.guide_quadrature_method == "Gauss-Legendre order 32"
     assert isinstance(manifest.warnings, tuple)
 
 

@@ -152,8 +152,16 @@ def _flatten_result(label: str, scenario: Scenario, result) -> dict[str, Any]:
         "support_acceleration_m_s2": (
             result.closed_form.continuous_support_acceleration_m_s2
         ),
-        "l0_total_guide_length_m": result.closed_form.total_guide_length_m,
-        "l0_guide_length_per_node_m": result.closed_form.guide_length_per_node_m,
+        "l0_total_physical_guide_length_m": (
+            result.closed_form.total_physical_guide_length_m
+        ),
+        "l0_physical_guide_length_per_node_m": (
+            result.closed_form.physical_guide_length_per_node_m
+        ),
+        "l1_physical_guide_length_per_node_m": (
+            result.rotor_stream.physical_guide_length_estimate_m
+        ),
+        "ideal_interaction_time_s": result.rotor_stream.ideal_interaction_time_s,
         "flight_time_s": None if ballistic is None else ballistic.flight_time_s,
         "minimum_ballistic_altitude_m": (
             None if ballistic is None else ballistic.minimum_altitude_m

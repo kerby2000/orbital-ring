@@ -14,10 +14,13 @@ quantities already produced by OR-1.1:
 - required deflection angle and delta-v;
 - rotor-element mass and passage frequency;
 - allowed lateral acceleration abstraction;
-- available guide length or requested guide-length solution;
+- ideal interaction time, inertial turn-path length, and Earth-fixed physical
+  guide-length estimate as three distinct quantities;
 - scenario and source manifest identifiers.
 
 It must not reach into the ballistic solver or duplicate orbital equations.
+The OR-1.1B physical length is a guide-frame kinematic estimate and must remain
+distinguishable from any future finite-field magnet length.
 
 ## Magnet-model protocol
 

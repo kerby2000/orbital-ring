@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orbital-ring"
-version = "0.2.0"
+version = "0.3.0"
 description = "Traceable L0/L1 physics kernel for polygonal Earth orbital-ring studies"
 readme = "README.md"
 requires-python = ">=3.11"

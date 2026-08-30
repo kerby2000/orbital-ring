@@ -6,7 +6,7 @@ The repository tracks source scenarios, sweep definitions, and small canonical
 human-readable OR-1.1 evidence:
 
 - `evidence/or-1.1/OR-1.1-EVIDENCE.md`;
-- the four CSV tables beside that report;
+- the six CSV tables beside that report;
 - its machine-readable manifest.
 
 The existing `artifacts/` directory from OR-1 is retained so reviewed baseline
@@ -35,3 +35,18 @@ CI artifacts are not committed back to the repository. Their `source_commit`
 therefore identifies the exact checked-out commit without a self-reference
 problem. GitHub Actions also associates the archived artifact with its workflow
 run and commit.
+
+## Canonical regeneration sequence
+
+Canonical tracked evidence is produced only after the source commit is clean:
+
+```bash
+git checkout <source-commit>
+python -m pytest
+orbital-ring evidence scenarios/reference.yaml --output evidence/or-1.1
+```
+
+The generated manifest must report that source commit and
+`source_worktree_dirty: false`. The evidence files are then committed in a
+separate evidence-only commit. Reproduction therefore checks out the manifest's
+`source_commit`, not the later commit that stores the generated files.

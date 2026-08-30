@@ -14,6 +14,7 @@ import pint
 import scipy
 
 from orbital_ring.ballistic import DEFAULT_INTEGRATOR_SETTINGS
+from orbital_ring.guide import GAUSS_LEGENDRE_ORDER
 from orbital_ring.config import Scenario
 from orbital_ring.constants import MODEL_VERSION
 from orbital_ring.results import Manifest
@@ -87,6 +88,13 @@ def numerical_traceability() -> dict[str, Any]:
         "terminal_position_tolerance_m": settings.target_position_tolerance_m,
         "solver_algorithm": "scipy.optimize.least_squares:trust-region-reflective",
         "maximum_solver_evaluations": settings.maximum_solver_evaluations,
+        "guide_kinematics_model": (
+            "constant-magnitude inertial velocity rotation relative to a "
+            "locally constant Earth-fixed guide velocity"
+        ),
+        "guide_quadrature_method": (
+            f"Gauss-Legendre order {GAUSS_LEGENDRE_ORDER}"
+        ),
     }
 
 

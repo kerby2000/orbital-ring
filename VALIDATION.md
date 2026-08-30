@@ -22,6 +22,11 @@ The test suite covers:
 10. Global force closure for N = 48, 96, 192, 480, 960, and 1920, including
     monotonic finite-N convergence to continuous support force.
 11. Runtime and numerical provenance fields in run and sweep manifests.
+12. Earth-fixed guide-frame quadrature, including the 96-node 573.86 m
+    reference and separation from the 598.87 m inertial turn path.
+13. Physical guide-length convergence to 55.093079 km for N = 48 through 1920.
+14. Mixed stride 1↔2 and 1↔3 transition angles and guide lengths at both
+    endpoints of one- and two-failure bypasses.
 
 Run:
 
@@ -36,9 +41,13 @@ The requirements quote rounded targets. Tests use:
 | Quantity | Target | Test tolerance |
 |---|---:|---:|
 | Circular velocity | 7.62 km/s | ±0.01 km/s |
-| L0 magnetic turning | 3.75 rad | ±0.02 rad |
+| Magnetic turn over inertial-period circuit | 3.75193436 rad | ±1×10⁻⁸ rad |
+| Magnetic turn over Earth-relative circuit | 3.91541644 rad | ±1×10⁻⁸ rad |
 | Magnetic curvature radius | 14.7 km | ±0.1 km |
 | Total L0 guide length | 55 km | ±1 km |
+| 96-node physical Earth-fixed guide | 573.86 m | ±0.1 m |
+| Mixed stride 1↔2 transition | 0.06117075 rad | ±2×10⁻⁸ rad |
+| Mixed stride 1↔3 transition | 0.08154744 rad | ±2×10⁻⁸ rad |
 
 The constants in the supplied scenario produce more digits than these rounded
 acceptance values; generated results retain full machine precision.
@@ -56,6 +65,6 @@ bounds.
 - No independent high-fidelity propagator is included in OR-1.
 - Hyperbolic and Earth-intersecting branches need a broader regression corpus.
 - Finite-duration guide dynamics have only the momentum-vector identity check;
-  they are not propagated through a field model.
+  guide-frame kinematics are not propagated through a gravity or field model.
 - Bypass stream transients and phase allocation require a control model beyond
   the static topology now included.

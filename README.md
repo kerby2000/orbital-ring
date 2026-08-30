@@ -3,11 +3,14 @@
 This repository is the initial traceable Python kernel for a polygonal,
 discontinuous equatorial Earth orbital ring. It implements only:
 
-- **L0** closed-form orbital and magnetic turning/guide-length scaling;
+- **L0** closed-form orbital turning and large-N Earth-fixed physical-guide
+  scaling;
 - **L1** numerical planar two-body propagation between rotating Earth-fixed
   point nodes;
 - rotor population, energy, passage-frequency, guide-occupancy, and mean
   reaction-force scaling;
+- OR-1.1 Earth-fixed guide-frame kinematics that keep interaction time,
+  inertial turn path, and physical guide length separate;
 - strict unit-bearing YAML scenarios, machine-readable manifests, explicit
   parameter sweeps, and a reproducible Markdown report.
 
@@ -49,6 +52,10 @@ instead of being approximated silently.
 node routes are represented separately, so a local failure does not turn the
 whole stream into a homogeneous stride-two ring.
 
+Failure-route results also contain node transitions. The two guides bordering
+a failed-node cluster use mixed incoming/outgoing strides; periodic stride-k
+turns are never reported as those local guide requirements.
+
 The public API intended for a later read-only application is small:
 
 ```python
@@ -76,8 +83,9 @@ orbital-ring evidence scenarios/reference.yaml --output ci-evidence/or-1.1
 
 CSV, Parquet, a complete JSON result set, and a sweep manifest are written.
 A configured Cartesian design is refused unless `--allow-cartesian` is passed.
-The `evidence` command writes global force closure, finite-node L1, local
-failure bypass, and rotor-element scaling tables.
+The `evidence` command writes global force closure, physical-guide convergence,
+finite-node L1, free-flight bypass, mixed node-transition, and rotor-element
+scaling tables.
 
 ## Repository layout
 
@@ -97,6 +105,7 @@ failure bypass, and rotor-element scaling tables.
 │   ├── config.py
 │   ├── constants.py
 │   ├── geometry.py
+│   ├── guide.py
 │   ├── manifest.py
 │   ├── network.py
 │   ├── orbit.py

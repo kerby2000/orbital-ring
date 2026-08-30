@@ -45,6 +45,7 @@ def evaluate_closed_form(
     rotor_velocity_m_s: float,
     allowed_lateral_acceleration_m_s2: float,
     node_count: int,
+    earth_rotation_rad_s: float,
 ) -> ClosedFormResult:
     """Evaluate all requested L0 equations.
 
@@ -57,20 +58,31 @@ def evaluate_closed_form(
     support = continuous_magnetic_support_acceleration(
         rotor_velocity_m_s, mu_m3_s2, radius_m
     )
-    turning = magnetic_turning_angle_many_node(rotor_velocity_m_s, circular)
+    inertial_period_turning = magnetic_turning_angle_many_node(
+        rotor_velocity_m_s, circular
+    )
+    earth_relative_speed = rotor_velocity_m_s - earth_rotation_rad_s * radius_m
+    if earth_relative_speed <= 0.0:
+        raise ValueError("prograde rotor speed must exceed Earth-fixed guide speed")
+    earth_relative_period = TAU * radius_m / earth_relative_speed
+    earth_fixed_turning = support / rotor_velocity_m_s * earth_relative_period
     curvature_radius = magnetic_curvature_radius(
         rotor_velocity_m_s, allowed_lateral_acceleration_m_s2
     )
-    total_length = curvature_radius * turning
+    total_physical_length = (
+        TAU * radius_m * support / allowed_lateral_acceleration_m_s2
+    )
     return ClosedFormResult(
         gravity_m_s2=gravity,
         circular_velocity_m_s=circular,
         escape_velocity_m_s=escape,
         continuous_support_acceleration_m_s2=support,
-        magnetic_turning_angle_rad=turning,
+        magnetic_turning_angle_inertial_period_rad=inertial_period_turning,
+        earth_relative_rotor_speed_m_s=earth_relative_speed,
+        earth_relative_circuit_period_s=earth_relative_period,
+        earth_fixed_magnetic_turning_angle_rad=earth_fixed_turning,
         magnetic_curvature_radius_m=curvature_radius,
-        total_guide_length_m=total_length,
-        guide_length_per_node_m=total_length / node_count,
-        approximation="large-N L0 scaling",
+        total_physical_guide_length_m=total_physical_length,
+        physical_guide_length_per_node_m=total_physical_length / node_count,
+        approximation="large-N L0 Earth-fixed physical-guide scaling",
     )
-

@@ -54,3 +54,41 @@ def test_failure_route_does_not_publish_homogeneous_stride_two_frequency(referen
         homogeneous_stride_two.rotor_stream.element_passage_frequency_per_node_hz,
         rel=0.1,
     )
+
+
+def test_one_failure_uses_two_mixed_stride_node_transitions(reference_scenario):
+    route = evaluate_failure_route(reference_scenario, [1])
+    affected = [item for item in route.node_transitions if item.is_failure_related]
+    assert len(affected) == 2
+    assert {(item.incoming_leg_stride, item.outgoing_leg_stride) for item in affected} == {
+        (1, 2),
+        (2, 1),
+    }
+    for transition in affected:
+        assert transition.actual_transition_angle_rad == pytest.approx(
+            0.06117075, abs=2.0e-8
+        )
+        assert transition.physical_guide_length_estimate_m == pytest.approx(
+            861.0, abs=2.0
+        )
+        assert transition.actual_transition_angle_rad != pytest.approx(
+            route.bypass_legs[0].ballistic.required_active_deflection_angle_rad,
+            abs=1.0e-4,
+        )
+
+
+def test_two_adjacent_failures_use_mixed_stride_three_transitions(reference_scenario):
+    route = evaluate_failure_route(reference_scenario, [1, 2])
+    affected = [item for item in route.node_transitions if item.is_failure_related]
+    assert len(affected) == 2
+    assert {(item.incoming_leg_stride, item.outgoing_leg_stride) for item in affected} == {
+        (1, 3),
+        (3, 1),
+    }
+    for transition in affected:
+        assert transition.actual_transition_angle_rad == pytest.approx(
+            0.08154744, abs=2.0e-8
+        )
+        assert transition.physical_guide_length_estimate_m == pytest.approx(
+            1_147.0, abs=2.0
+        )

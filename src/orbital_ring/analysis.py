@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
+
 from orbital_ring.ballistic import solve_ballistic_intercept
 from orbital_ring.config import Scenario
-from orbital_ring.geometry import node_angular_spacing
+from orbital_ring.geometry import node_angular_spacing, rotate_vector
 from orbital_ring.manifest import build_manifest
 from orbital_ring.orbit import evaluate_closed_form
 from orbital_ring.results import BallisticResult, SimulationResult
@@ -55,6 +57,7 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             scenario.magnetic.max_lateral_acceleration_m_s2
         ),
         node_count=scenario.ring.node_count,
+        earth_rotation_rad_s=scenario.earth.rotation_rate_rad_s,
     )
 
     ballistic: BallisticResult | None = None
@@ -70,8 +73,14 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             node_stride=scenario.transfer.node_stride,
         )
         flight_time = ballistic.flight_time_s
-        active_angle = ballistic.required_active_deflection_angle_rad
-        delta_v = ballistic.required_delta_v_m_s
+        target_angle = (
+            ballistic.node_angular_spacing_rad
+            + scenario.earth.rotation_rate_rad_s * ballistic.flight_time_s
+        )
+        incoming_local = rotate_vector(
+            np.asarray(ballistic.incoming_velocity_m_s), -target_angle
+        )
+        outgoing_local = np.asarray(ballistic.outgoing_velocity_m_s)
     else:
         relative_angular_rate = (
             scenario.rotor.geocentric_velocity_m_s / scenario.radius_m
@@ -86,12 +95,16 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
             / relative_angular_rate
         )
         active_angle = (
-            closed.magnetic_turning_angle_rad
+            closed.earth_fixed_magnetic_turning_angle_rad
             * scenario.transfer.node_stride
             / scenario.ring.node_count
         )
-        delta_v = 2.0 * scenario.rotor.geocentric_velocity_m_s * math.sin(
-            active_angle / 2.0
+        half_angle = 0.5 * active_angle
+        incoming_local = scenario.rotor.geocentric_velocity_m_s * np.array(
+            [math.sin(half_angle), math.cos(half_angle)]
+        )
+        outgoing_local = scenario.rotor.geocentric_velocity_m_s * np.array(
+            [-math.sin(half_angle), math.cos(half_angle)]
         )
 
     rotor = evaluate_rotor_stream(
@@ -101,8 +114,17 @@ def evaluate_scenario(scenario: Scenario) -> SimulationResult:
         node_count=scenario.ring.node_count,
         node_stride=scenario.transfer.node_stride,
         flight_time_s=flight_time,
-        active_deflection_angle_rad=active_angle,
-        required_delta_v_m_s=delta_v,
+        incoming_local_velocity_m_s=(
+            float(incoming_local[0]),
+            float(incoming_local[1]),
+        ),
+        outgoing_local_velocity_m_s=(
+            float(outgoing_local[0]),
+            float(outgoing_local[1]),
+        ),
+        guide_tangential_speed_m_s=(
+            scenario.earth.rotation_rate_rad_s * scenario.radius_m
+        ),
         allowed_lateral_acceleration_m_s2=(
             scenario.magnetic.max_lateral_acceleration_m_s2
         ),
