@@ -1,0 +1,212 @@
+{
+  "scenario_id": "or1-reference-500km-96n-12kms",
+  "input_parameters": {
+    "scenario_id": "or1-reference-500km-96n-12kms",
+    "earth": {
+      "mean_radius_m": 6371000.0,
+      "gravitational_parameter_m3_s2": 398600441800000.0,
+      "rotation_rate_rad_s": 7.292115e-05
+    },
+    "ring": {
+      "altitude_m": 500000.0,
+      "node_count": 96,
+      "plane": "equatorial",
+      "direction": "prograde"
+    },
+    "rotor": {
+      "geocentric_velocity_m_s": 12000.0,
+      "total_moving_mass_kg": 1000000.0,
+      "element_mass_kg": 0.05
+    },
+    "magnetic": {
+      "max_lateral_acceleration_m_s2": 9806.65
+    },
+    "safety": {
+      "minimum_safe_altitude_m": 100000.0
+    },
+    "transfer": {
+      "node_stride": 1
+    },
+    "model": {
+      "fidelity": "L1"
+    }
+  },
+  "derived_parameters": {
+    "geocentric_radius_m": 6871000.0,
+    "circular_velocity_m_s": 7616.560806262885,
+    "escape_velocity_m_s": 10771.443590856328,
+    "node_angular_spacing_rad": 0.06544984694978735,
+    "number_of_rotor_elements": 20000000.0
+  },
+  "model_version": "0.4.0",
+  "fidelity": "L1",
+  "source_commit": "ebaa391fabe5f163998c9f99691fbf703db0b5b6",
+  "source_worktree_dirty": false,
+  "artifact_commit": null,
+  "timestamp_utc": "2026-08-30T21:24:35.604743+00:00",
+  "configuration_hash": "025ca45b3ed88384e9c83da13ea8f1e087783e2e93adf04ae8cfd34cbf93a318",
+  "python_version": "3.11.15",
+  "numpy_version": "2.4.6",
+  "scipy_version": "1.17.1",
+  "pint_version": "0.25.3",
+  "platform_information": "Windows-10-10.0.26200-SP0",
+  "numerical_integrator": "scipy.integrate.solve_ivp:DOP853",
+  "integrator_rtol": 2e-10,
+  "integrator_atol": 1e-07,
+  "integrator_max_step_policy": "max(flight_time_s * 0.012500000000000001, 1e-6 s)",
+  "terminal_position_tolerance_m": 0.25,
+  "solver_algorithm": "scipy.optimize.least_squares:trust-region-reflective",
+  "maximum_solver_evaluations": 120,
+  "guide_kinematics_model": "constant-magnitude inertial velocity rotation relative to a locally constant Earth-fixed guide velocity",
+  "guide_quadrature_method": "Gauss-Legendre order 32",
+  "warnings": [
+    "Rotor speed is at or above local two-body escape velocity.",
+    "L0 guide lengths are large-N scaling approximations."
+  ],
+  "evidence_kind": "OR-2 M0/M1 magnetic feasibility studies",
+  "magnetic_fidelity_labels": [
+    "M0-PRESSURE",
+    "M1-GUIDE-KINEMATICS",
+    "M1-QUADRUPOLE",
+    "M1-DIPOLE",
+    "M1-FERRO",
+    "M1-PM",
+    "M1-SCLOOP",
+    "M1-INDUCTIVE",
+    "M1-GEOMETRY",
+    "M1-APERTURE",
+    "M1-PACKING",
+    "M1-DIPOLE-COUPLING",
+    "LOSS-L1"
+  ],
+  "material_registry_version": "1.0.0",
+  "material_registry_path": "data/materials/registry.json",
+  "evidence_files": [
+    "magnetic-demand-scaling.csv",
+    "guide-length-inversion.csv",
+    "node-count-magnetic-scaling.csv",
+    "specific-moment-gradient-map.csv",
+    "maxwell-pressure-bounds.csv",
+    "rotor-concept-comparison.csv",
+    "aperture-field-energy.csv",
+    "ripple-loss-map.csv",
+    "conductive-loop-benchmark.csv",
+    "small-element-limit.csv",
+    "source-registry.csv"
+  ],
+  "study_matrix": {
+    "primary_node_counts": [
+      96,
+      960
+    ],
+    "scaling_node_counts": [
+      48,
+      96,
+      192,
+      480,
+      960,
+      1920
+    ],
+    "element_masses_kg": [
+      1.0,
+      0.5,
+      0.1,
+      0.05,
+      0.02,
+      0.01,
+      0.005,
+      0.001,
+      0.0005,
+      0.0001
+    ],
+    "accelerations_g0": [
+      100.0,
+      250.0,
+      500.0,
+      1000.0,
+      2000.0,
+      5000.0
+    ],
+    "specific_moments_a_m2_kg": [
+      10.0,
+      50.0,
+      100.0,
+      200.0,
+      500.0
+    ],
+    "ripple_pitches_m": [
+      10.0,
+      1.0,
+      0.1
+    ],
+    "target_guide_lengths_m": [
+      50.0,
+      100.0,
+      250.0,
+      500.0,
+      1000.0,
+      2500.0
+    ]
+  },
+  "study_assumptions": {
+    "clearance_factor": 2.5,
+    "navigation_margin_m": 0.005,
+    "operating_offset_fraction_of_aperture": 0.5,
+    "required_surface_gap_factor_of_envelope": 1.0,
+    "ripple_flux_density_amplitude_t": 0.01,
+    "fe_co_mass_fraction": 0.8,
+    "fe_co_utilization": 0.7,
+    "permanent_magnet_mass_fraction": 1.0,
+    "permanent_magnet_utilization": 0.85,
+    "ferrite_mass_fraction": 1.0,
+    "ferrite_utilization": 0.65,
+    "concept_comparison_element_mass_kg": 0.05,
+    "superconducting_loop_radius_m": 0.01,
+    "superconducting_loop_turns": 100,
+    "superconducting_loop_current_a": 80.0,
+    "superconducting_loop_temperature_k": 77.0,
+    "superconducting_loop_external_field_t": 1.0,
+    "superconducting_loop_external_field_orientation": "perpendicular-to-tape",
+    "superconducting_loop_effective_conductor_radius_m": 0.0005,
+    "superconducting_loop_effective_envelope_density_kg_m3": 5000.0,
+    "conductive_loop_radius_m": 0.005,
+    "conductive_loop_conductor_radius_m": 0.0005,
+    "vacoflux_ripple_section_thickness_m": 0.001,
+    "vacoflux_ripple_relative_permeability": 1.0,
+    "n87_ripple_section_thickness_m": 0.0005,
+    "n87_ripple_relative_permeability": 2200.0,
+    "mqxf_gradient_t_m": 132.6
+  },
+  "guide_demand_adapter": {
+    "scenario_id": "or1-reference-500km-96n-12kms",
+    "configuration_hash": "025ca45b3ed88384e9c83da13ea8f1e087783e2e93adf04ae8cfd34cbf93a318",
+    "node_count": 96,
+    "transition_identity": "normal-node",
+    "incoming_local_inertial_velocity_m_s": [
+      244.68639050680156,
+      11997.505097740393
+    ],
+    "outgoing_local_inertial_velocity_m_s": [
+      -244.68639052455407,
+      11997.505097739782
+    ],
+    "guide_tangential_velocity_m_s": 501.04122165,
+    "inertial_rotor_speed_m_s": 12000.000000000124,
+    "inertial_turn_angle_rad": 0.04078389156465826,
+    "required_delta_v_m_s": 489.37278103135566,
+    "rotor_element_mass_kg": 0.05,
+    "net_impulse_per_element_n_s": 24.468639051567784,
+    "integrated_lateral_impulse_per_element_n_s": 24.47033493879521,
+    "element_passage_frequency_hz": 5328.49884829461,
+    "total_mean_node_reaction_force_n": 130381.11500561547,
+    "guide_relative_entry_speed_m_s": 11499.067487581355,
+    "guide_relative_exit_speed_m_s": 11499.067487581122,
+    "representative_guide_relative_speed_m_s": 11498.995015331288,
+    "guide_frame_element_spacing_m": 2.158017734959547,
+    "legacy_acceleration_m_s2": 9806.65,
+    "legacy_physical_guide_length_m": 573.86418294666,
+    "legacy_interaction_time_s": 0.049905594548179465,
+    "source_model_version": "0.4.0",
+    "source_commit": "ebaa391fabe5f163998c9f99691fbf703db0b5b6"
+  }
+}
