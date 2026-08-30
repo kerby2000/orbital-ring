@@ -1,68 +1,52 @@
-# Proposed OR-2 extension interfaces
+# Implemented OR-2 extension interfaces
 
-OR-2 should add magnet and guide models without changing the orbital equations
-or the L1 ballistic solver. The following boundaries keep the fidelity layers
-explicit.
+OR-2 is additive. It does not modify the L0/L1 orbital equations, L1 shooting
+solver, Earth-fixed guide quadrature, or failure-route topology.
 
-## Guide-demand input
+## `GuideDemand`
 
-A future guide model should consume an immutable demand record containing only
-quantities already produced by OR-1.1:
+`orbital_ring.magnetic_demand.build_guide_demand()` is the sole normal-route
+adapter from an accepted OR-1.1 `SimulationResult`. Its frozen record carries:
 
-- node or route-leg identifier;
-- geocentric entry and exit velocity vectors;
-- required deflection angle and delta-v;
-- rotor-element mass and passage frequency;
-- allowed lateral acceleration abstraction;
-- ideal interaction time, inertial turn-path length, and Earth-fixed physical
-  guide-length estimate as three distinct quantities;
-- scenario and source manifest identifiers.
+- scenario/configuration and transition identity;
+- local incoming/outgoing inertial velocity vectors;
+- guide tangential velocity, turn angle, delta-v, net impulse, and integrated
+  lateral impulse;
+- element mass, passage frequency, node mean reaction, and guide spacing;
+- guide-relative entry/exit/representative speeds;
+- the legacy acceleration, physical guide length, and interaction time;
+- source model/commit traceability.
 
-It must not reach into the ballistic solver or duplicate orbital equations.
-The OR-1.1B physical length is a guide-frame kinematic estimate and must remain
-distinguishable from any future finite-field magnet length.
+Magnetic modules consume this record or explicit magnetic/material inputs.
+They do not call `evaluate_scenario`, the ballistic solver, or orbital
+closed-form functions.
 
-## Magnet-model protocol
+## Invertible guide study
 
-A magnet implementation can expose a protocol such as:
+`solve_acceleration_for_guide_length()` provides length-driven demand.
+`solve_guide_length_for_acceleration()` and
+`solve_guide_length_for_force()` provide capability-driven results. All return
+the same immutable result schema with impulse-based node-force closure.
 
-```python
-class GuideModel(Protocol):
-    fidelity_label: str
-    def evaluate(self, demand: GuideDemand) -> GuideResult: ...
-```
+## Independent magnetic modules
 
-`GuideResult` may later carry field, gradient, current, geometry, loss, thermal,
-and feasibility outputs. OR-1.1 intentionally defines none of those physical
-relationships.
+- `magnetic_field.py`: M0 pressure, M1 quadrupole, generic aligned dipole;
+- `magnetic_rotors.py`: Fe-Co/ferrite saturation surrogate, NdFeB permanent
+  dipole, and persistent-current REBCO loop;
+- `magnetic_losses.py`: longitudinal ripple, skin depth, classical thin-section
+  eddy comparison, and conductive R-L loop;
+- `magnetic_geometry.py`: sphere/cylinder/loop envelopes, aperture floor,
+  stream packing, and point-dipole neighbor coupling;
+- `materials.py`: validated access to `data/materials/registry.json`;
+- `or2_evidence.py`: bounded study orchestration and reporting only.
 
-## Gravity and propagation protocol
+Equations remain in importable physics modules; CLI/report code contains no
+independent force law.
 
-If OR-2 introduces J2 or non-spherical Earth, add a propagation-model interface
-that supplies acceleration and a fidelity label. Preserve the present spherical
-two-body implementation as the L1 reference. New results must name their force
-model and numerical tolerances in the manifest.
+## Deferred interfaces for OR-3
 
-## Network and control protocol
-
-The current static route maps active nodes to target nodes. A later controller
-may consume node availability and emit a time-indexed route plan. It should
-remain separate from:
-
-- the arbitrary-stride ballistic primitive;
-- steady rotor population scaling;
-- guide-demand and magnet-response models.
-
-This separation is necessary before modeling reroute transients, timing gaps,
-element rephasing, sensor uncertainty, or actuator limits.
-
-## Questions to resolve before implementation
-
-1. Is guide acceleration prescribed, solved from a field model, or capped by
-   both structural and electromagnetic constraints?
-2. Are forces and power reported in the Earth-fixed guide frame, inertial
-   frame, or both?
-3. What finite guide envelope and node-clearance geometry constrains the L1
-   trajectory?
-4. Which higher-fidelity gravity model is the first accepted comparison case?
-5. What transient routing policy and minimum separation apply after failures?
+OR-3 should add field-map and force-map protocols able to replace the ideal
+quadrupole without changing `GuideDemand`, followed by material curves,
+thermal/loss state, structural loads, finite guide ends, and a local
+orientation/navigation controller. Global optimization should wait until
+these component models have validated domains.

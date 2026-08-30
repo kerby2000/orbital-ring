@@ -3,10 +3,13 @@
 ## Tracked evidence
 
 The repository tracks source scenarios, sweep definitions, and small canonical
-human-readable OR-1.1 evidence:
+human-readable OR-1.1 and OR-2 evidence:
 
 - `evidence/or-1.1/OR-1.1-EVIDENCE.md`;
 - the six CSV tables beside that report;
+- its machine-readable manifest.
+- `evidence/or-2/OR-2-EVIDENCE.md`;
+- the eleven OR-2 CSV study/source tables beside that report;
 - its machine-readable manifest.
 
 The existing `artifacts/` directory from OR-1 is retained so reviewed baseline
@@ -44,6 +47,7 @@ Canonical tracked evidence is produced only after the source commit is clean:
 git checkout <source-commit>
 python -m pytest
 orbital-ring evidence scenarios/reference.yaml --output evidence/or-1.1
+orbital-ring or2-evidence scenarios/reference.yaml --output evidence/or-2
 ```
 
 The generated manifest must report that source commit and

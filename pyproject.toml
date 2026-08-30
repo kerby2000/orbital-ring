@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orbital-ring"
-version = "0.3.0"
-description = "Traceable L0/L1 physics kernel for polygonal Earth orbital-ring studies"
+version = "0.4.0"
+description = "Traceable orbital and M0/M1 magnetic feasibility kernel for orbital-ring studies"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -28,6 +28,7 @@ orbital-ring = "orbital_ring.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/orbital_ring"]
+force-include = { "data/materials/registry.json" = "orbital_ring/data/materials/registry.json" }
 
 [tool.pytest.ini_options]
 addopts = "-ra"

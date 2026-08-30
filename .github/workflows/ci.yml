@@ -54,11 +54,14 @@ jobs:
       - name: Generate OR-1.1 physics evidence
         run: orbital-ring evidence scenarios/reference.yaml --output ci-evidence/or-1.1
 
+      - name: Generate OR-2 magnetic feasibility evidence
+        run: orbital-ring or2-evidence scenarios/reference.yaml --output ci-evidence/or-2
+
       - name: Archive reproducible evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: or-1.1-evidence-py${{ matrix.python-version }}
+          name: or-2-evidence-py${{ matrix.python-version }}
           path: ci-evidence/
           if-no-files-found: warn
           retention-days: 30

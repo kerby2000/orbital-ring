@@ -27,6 +27,20 @@ The test suite covers:
 13. Physical guide-length convergence to 55.093079 km for N = 48 through 1920.
 14. Mixed stride 1↔2 and 1↔3 transition angles and guide lengths at both
     endpoints of one- and two-failure bypasses.
+15. Exact length-driven/capability-driven guide inversion and node impulse
+    closure through `GuideDemand`.
+16. Synthetic `F=mu G`, `a=(mu/m)G`, and fixed-specific-moment mass
+    cancellation.
+17. Quadrupole pole-tip field and closed-form aperture energy against an
+    independent numerical area integral.
+18. Maxwell pressure/energy-density identity.
+19. Source-backed ferromagnet/permanent-magnet moments and persistent-loop
+    `mu=NIA`, including strict rejection of unsupported REBCO current margins.
+20. Sinusoidal R-L steady state, ripple frequency, classical eddy scaling,
+    skin-depth/source-domain flags, packing overlap, and point-dipole neighbor
+    formulas.
+21. Small-element studies showing constant gradient, aperture-floor behavior,
+    worsening packing, and increasing coupling.
 
 Run:
 
@@ -68,3 +82,10 @@ bounds.
   guide-frame kinematics are not propagated through a gravity or field model.
 - Bypass stream transients and phase allocation require a control model beyond
   the static topology now included.
+- M0/M1 magnetic models need comparison with 2-D/3-D field solvers and measured
+  force data over the relevant gradient, offset, temperature, and frequency
+  domains.
+- REBCO in-field current margin and external-field AC loss are intentionally
+  unsupported with the current scalar source data.
+- Magnetic, structural, thermal, orientation/control, and collective-stream
+  models are not yet coupled.

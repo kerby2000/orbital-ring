@@ -280,9 +280,143 @@ As \(N\) grows, the L1 ballistic deflection divided by leg time converges to
 the continuous support acceleration. OR-1.1 reports the signed and absolute
 relative finite-node error instead of treating L0 as exact at small \(N\).
 
+## OR-2 guide-demand boundary
+
+OR-2 magnetic models consume an immutable `GuideDemand` assembled from the
+accepted OR-1.1 `SimulationResult`. It contains local endpoint velocities,
+turn angle, delta-v, element mass, passage frequency, node force,
+guide-frame speeds/spacing, and legacy guide kinematics. Magnetic modules do
+not call the ballistic solver or reproduce orbital equations.
+
+For a fixed accepted velocity turn, interaction time and physical Earth-fixed
+guide length scale inversely with ideal constant normal acceleration:
+
+\[
+t(a)=t_{ref}\frac{a_{ref}}{a},\qquad
+L(a)=L_{ref}\frac{a_{ref}}{a}.
+\]
+
+This supports length-driven inversion \(a=a_{ref}L_{ref}/L_{target}\) and
+capability-driven guide length. Net vector impulse is \(m\Delta v\); the
+integrated magnitude of the rotating lateral force is separately reported as
+\(mv\delta\). Node-average closure uses \(f_{node}m\Delta v\).
+
+## M0 magnetic bounds
+
+For field magnitude \(B\), Maxwell pressure and vacuum field-energy density
+are
+
+\[
+p_B=u_B=\frac{B^2}{2\mu_0}.
+\]
+
+The ideal area scale \(F/p_B\) is an absolute force-density sanity bound, not
+a rotor force law or coil design.
+
+## M1 quadrupole and aligned dipole
+
+The ideal current-free 2-D normal quadrupole surrogate uses
+\(\mathbf B=(Gx,-Gy)\), so \(|B|=Gr\). For aperture radius \(a\),
+
+\[
+B_{pt}=Ga,\qquad
+U'_{aperture}=\int_A\frac{B^2}{2\mu_0}dA
+=\frac{\pi G^2a^4}{4\mu_0}.
+\]
+
+Only aperture field energy is included. Coil/yoke/end fields and mechanical
+support increase real stored energy. The external MQXF values (150-mm clear
+aperture, 132.6 T/m nominal gradient, about 11.4 T peak conductor field) are a
+scale comparison, not an orbital-guide mass claim.
+
+For an adiabatically aligned point dipole,
+
+\[
+F\simeq\mu G,\qquad a\simeq\frac{\mu}{m}G,\qquad
+G_{required}=\frac{a}{\mu/m}.
+\]
+
+Thus at fixed specific moment \(\mu/m\), reducing mass reduces moment and
+force in proportion but does not reduce required gradient. High-field-seeking
+dipoles are not guaranteed passive 3-D stability.
+
+## M1 rotor concepts
+
+For saturated soft material with source polarization \(J_s\), density
+\(\rho\), magnetic mass fraction \(x\), and utilization \(\eta\):
+
+\[
+M_s=J_s/\mu_0,\quad V_m=xm/\rho,\quad \mu=\eta M_sV_m.
+\]
+
+The utilization factor makes demagnetization/geometry assumptions explicit;
+saturation is never automatic. The permanent-magnet model uses the same
+volume relationship with \(M\simeq B_r/\mu_0\), reports a \(\mu_0H_{cJ}\)
+comparison scale, and preserves temperature warnings.
+
+For a persistent-current loop,
+
+\[
+\mu=NIA,\qquad \ell_c=2\pi RN.
+\]
+
+The optional thin circular-loop inductance approximation is
+
+\[
+L\simeq\mu_0N^2R[\ln(8R/r_c)-2]
+\]
+
+and is accepted only for \(R/r_c\ge10\). Stored energy is \(LI^2/2\).
+SuperPower's scalar 77-K self-field current range is used only at that exact
+condition; in-field points are unsupported rather than extrapolated.
+
+## Ripple, loss, aperture, packing, and coupling
+
+Longitudinal segmentation ripple is distinct from the smooth transverse
+gradient:
+
+\[
+B_{ripple}(s)=\Delta B\sin(2\pi s/\lambda),\qquad f=u_{guide}/\lambda.
+\]
+
+The LOSS-L1 thin-section comparison uses
+
+\[
+P_e/V=\frac{\pi^2B_p^2t^2f^2}{6\rho_e},\qquad
+\delta_{skin}=\sqrt{\frac{2\rho_e}{2\pi f\mu_0\mu_r}}.
+\]
+
+It is flagged invalid for \(t/\delta_{skin}>0.3\). Manufacturer core loss is
+not extrapolated. A separate conductive loop solves the sinusoidal steady
+state of \(L\dot i+Ri=-\dot\Phi_{ext}\).
+
+Spherical/cylindrical/loop envelopes feed the aperture rule
+
+\[
+a=max(c_r r_{rotor},a_{navigation}).
+\]
+
+Packing compares mean guide-frame center spacing with rotor envelope plus an
+explicit surface-gap study margin. Worst-case coaxial neighbor coupling uses
+
+\[
+B_{nn}=\frac{\mu_0}{4\pi}\frac{2\mu}{s^3},\qquad
+F_{nn}=\frac{3\mu_0\mu^2}{2\pi s^4}.
+\]
+
+The point-dipole result is considered reliable only above five rotor
+diameters. Soft-ferromagnetic coupling is labeled as the guide-magnetized
+worst case; free-flight moment may be much smaller.
+
 ## Fidelity labels
 
 - **L0**: closed-form spherical-Earth scaling.
 - **L1**: numerical planar two-body propagation with rotating point targets.
+- **M0-PRESSURE**: Maxwell pressure/field-energy bound.
+- **M1-GUIDE-KINEMATICS**: OR-1.1 demand length/capability inversion.
+- **M1-QUADRUPOLE**: ideal circular-aperture gradient surrogate.
+- **M1-DIPOLE**, **M1-FERRO**, **M1-PM**, **M1-SCLOOP**: analytic rotor force/moment models.
+- **M1-INDUCTIVE**: simple sinusoidal conductive R-L loop benchmark.
+- **LOSS-L1**: first-order ripple, skin-depth, and classical eddy comparison.
 
-No calculation in this repository claims higher fidelity.
+No calculation in this repository claims production magnet fidelity.

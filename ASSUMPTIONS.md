@@ -24,6 +24,16 @@
   bypass leg is not used to redefine the whole ring as stride 2 or 3.
 - The static failure-route period is the sum of its modeled leg flight times;
   transient rerouting, rephasing, and control are omitted.
+- OR-2 receives orbital/guide demand only through an immutable adapter built
+  from accepted OR-1.1 results.
+- Magnetic dipoles remain adiabatically aligned with the local field-gradient
+  direction; orientation dynamics are not integrated.
+- Ferromagnetic and permanent-magnet moment calculations include explicit
+  material mass fraction and utilization/demagnetization factors.
+- Quadrupole aperture field follows the ideal 2-D relationship `|B|=G r`.
+- Aperture clearance, navigation floor, ripple amplitude/pitch, and stream
+  separation are explicit study choices rather than hidden material facts.
+- Neighbor coupling is a nearest-neighbor coaxial point-dipole worst case.
 
 ## Explicitly omitted physics
 
@@ -31,15 +41,23 @@
 - oblate or otherwise non-spherical Earth geometry;
 - Moon and Sun perturbations;
 - atmosphere and aerodynamic drag;
-- all electromagnetic interactions and magnet topology;
-- magnetic fringe fields, saturation, losses, quench behaviour, and power;
+- finite-length 3-D magnet topology, end fields, and FEM;
+- coil/yoke winding layout, structural support, insulation, protection, and
+  manufacturability;
+- detailed REBCO in-field critical-current surfaces, AC loss, persistent
+  joints, quench propagation, and cryogenic system design;
+- hysteresis and anomalous loss outside source measurement domains;
 - finite node or guide size and collision/clearance geometry;
 - sensor, timing, navigation, and manufacturing uncertainty;
 - active control and stability analysis;
 - structural elasticity, vibration, and global ring flexibility;
 - thermal models and radiative/conductive heat transfer;
 - optimization, lifecycle, economics, and reliability;
-- relativistic effects and rotor-element interactions.
+- relativistic effects and collective rotor-element dynamics.
+
+OR-2 includes a first-order nearest-neighbor magnetic check but omits coupled
+chain dynamics, active dipole orientation, navigation control, thermal rise,
+radiative rejection, fatigue, and rotor containment.
 
 ## Interpretation limits
 
@@ -47,8 +65,9 @@ L0 Earth-fixed physical guide lengths are large-node-count scaling estimates. Ap
 small number of nodes is useful only as a comparison scale. L1 provides a
 ballistic point-intercept and node velocity discontinuity; it does not prove
 that a finite guide can occupy that location without intersecting Earth or
-other hardware. The allowed lateral acceleration is an input abstraction, not
-a magnet-design result.
+other hardware. The allowed lateral acceleration is an input abstraction.
+OR-2 can invert that abstraction or calculate it from an M1 dipole capability,
+but no M0/M1 result is a production magnet design.
 
 An Earth intersection flag does not stop mathematical propagation. Such a
 result is infeasible under the model and must not be interpreted as a physical
