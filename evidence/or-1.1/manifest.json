@@ -38,12 +38,12 @@
     "node_angular_spacing_rad": 0.06544984694978735,
     "number_of_rotor_elements": 20000000.0
   },
-  "model_version": "0.2.0",
+  "model_version": "0.3.0",
   "fidelity": "L1",
-  "source_commit": "7c47c60fe3d74ce534fefd2306c1e72deb3ccb48",
-  "source_worktree_dirty": true,
+  "source_commit": "0be80c23d615ed8c3e645122eb68b60af7dec177",
+  "source_worktree_dirty": false,
   "artifact_commit": null,
-  "timestamp_utc": "2026-08-30T19:46:14.634964+00:00",
+  "timestamp_utc": "2026-08-30T20:22:58.796965+00:00",
   "configuration_hash": "025ca45b3ed88384e9c83da13ea8f1e087783e2e93adf04ae8cfd34cbf93a318",
   "python_version": "3.11.15",
   "numpy_version": "2.4.6",
@@ -57,14 +57,18 @@
   "terminal_position_tolerance_m": 0.25,
   "solver_algorithm": "scipy.optimize.least_squares:trust-region-reflective",
   "maximum_solver_evaluations": 120,
+  "guide_kinematics_model": "constant-magnitude inertial velocity rotation relative to a locally constant Earth-fixed guide velocity",
+  "guide_quadrature_method": "Gauss-Legendre order 32",
   "warnings": [
     "Rotor speed is at or above local two-body escape velocity.",
     "L0 guide lengths are large-N scaling approximations."
   ],
   "evidence_files": [
     "global-force-closure.csv",
+    "physical-guide-convergence.csv",
     "node-count-l1.csv",
-    "failure-bypasses.csv",
+    "failure-bypass-legs.csv",
+    "failure-node-transitions.csv",
     "rotor-element-scaling.csv"
   ],
   "evidence_kind": "OR-1.1 hardening tables"
