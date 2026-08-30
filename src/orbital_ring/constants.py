@@ -18,6 +18,9 @@ REFERENCE_EARTH_MU_M3_S2 = 3.986_004_418e14
 REFERENCE_EARTH_ROTATION_RAD_S = 7.292_115_0e-5
 
 TAU = 2.0 * math.pi
-MODEL_VERSION = "0.3.0"
+MODEL_VERSION = "0.4.0"
 L0_LABEL = "L0 closed-form scaling"
 L1_LABEL = "L1 numerical two-body propagation"
+M0_PRESSURE_LABEL = "M0-PRESSURE Maxwell force-density bound"
+M1_DIPOLE_LABEL = "M1-DIPOLE aligned point-dipole interaction"
+LOSS_L1_LABEL = "LOSS-L1 first-order ripple and conductive loss"

@@ -336,15 +336,19 @@ def rotor_element_scaling_table(
 
 
 def _format_markdown_value(value: object) -> str:
+    if value is None:
+        return "not-modeled"
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, float):
+        if math.isnan(value):
+            return "not-modeled"
         if value == 0.0:
             return "0"
         if abs(value) >= 1.0e6 or abs(value) < 1.0e-4:
             return f"{value:.8e}"
         return f"{value:.8f}".rstrip("0").rstrip(".")
-    return str(value)
+    return str(value).replace("|", "\\|").replace("\n", " ")
 
 
 def dataframe_to_markdown(frame: pd.DataFrame) -> str:

@@ -1,0 +1,313 @@
+{
+  "registry_version": "1.0.0",
+  "accessed_date": "2026-08-30",
+  "datasets": {
+    "vacoflux_50": {
+      "category": "saturated_soft_ferromagnet",
+      "material": "49% Co-Fe",
+      "grade": "VACOFLUX 50 solid material",
+      "source": {
+        "organization": "VACUUMSCHMELZE GmbH & Co. KG",
+        "title": "VACOFLUX 50 product information",
+        "url": "https://vacuumschmelze.com/03_Documents/Brochures/Datasheet%20%20VACOFLUX%2050.pdf",
+        "publication_date": "2022-07"
+      },
+      "properties": {
+        "saturation_polarization_t": {
+          "value": 2.30,
+          "unit": "T",
+          "temperature": "room temperature",
+          "field_condition": "solid material; saturation polarization",
+          "notes": "Typical value; saturation is not guaranteed by geometry."
+        },
+        "density_kg_m3": {
+          "value": 8120.0,
+          "unit": "kg/m^3",
+          "temperature": "room temperature",
+          "field_condition": "not applicable",
+          "notes": "Typical mass density."
+        },
+        "electrical_resistivity_ohm_m": {
+          "value": 4.2e-7,
+          "unit": "ohm m",
+          "temperature": "room temperature",
+          "field_condition": "not specified",
+          "notes": "0.42 micro-ohm metre."
+        },
+        "maximum_permeability": {
+          "value": 7000.0,
+          "unit": "1",
+          "temperature": "room temperature",
+          "field_condition": "final annealed solid material",
+          "notes": "Maximum permeability, not an incremental permeability at saturation."
+        },
+        "curie_temperature_c": {
+          "value": 950.0,
+          "unit": "degC",
+          "temperature": "not applicable",
+          "field_condition": "not applicable",
+          "notes": "Curie temperature; not an allowable operating temperature."
+        }
+      }
+    },
+    "vacodym_902_tp": {
+      "category": "permanent_magnet",
+      "material": "NdFeB",
+      "grade": "VACODYM 902 TP",
+      "source": {
+        "organization": "VACUUMSCHMELZE GmbH & Co. KG",
+        "title": "VACODYM 902 TP and VACODYM/VACOMAX product information",
+        "url": "https://vacuumschmelze.com/03_Documents/Brochures/Product%20Information%20VACODYM-VACOMAX%20en.pdf",
+        "publication_date": "2026-03"
+      },
+      "properties": {
+        "remanence_t": {
+          "value": 1.40,
+          "unit": "T",
+          "temperature": "room temperature",
+          "field_condition": "minimum remanence",
+          "notes": "Current manufacturer minimum for transverse-pressed grade."
+        },
+        "intrinsic_coercivity_a_m": {
+          "value": 1190000.0,
+          "unit": "A/m",
+          "temperature": "room temperature",
+          "field_condition": "minimum intrinsic coercivity HcJ",
+          "notes": "Demagnetization margin also depends on shape, orientation, and temperature."
+        },
+        "density_kg_m3": {
+          "value": 7600.0,
+          "unit": "kg/m^3",
+          "temperature": "20 degC",
+          "field_condition": "not applicable",
+          "notes": "Representative VACODYM family typical density; family range is about 7.5-7.8 g/cm^3."
+        },
+        "consult_manufacturer_above_temperature_c": {
+          "value": 150.0,
+          "unit": "degC",
+          "temperature": "not applicable",
+          "field_condition": "family application guidance",
+          "notes": "Manufacturer advises consultation for VACODYM applications above 150 degC; this is not a grade-specific guaranteed maximum."
+        }
+      }
+    },
+    "tdk_n87": {
+      "category": "high_resistivity_ferrite",
+      "material": "MnZn ferrite",
+      "grade": "SIFERRIT N87",
+      "source": {
+        "organization": "TDK Electronics AG",
+        "title": "SIFERRIT material N87",
+        "url": "https://www.tdk-electronics.tdk.com/download/540216/d6940b239127a8bab71b22168746021b/pdf-n87.pdf",
+        "publication_date": "2025-06"
+      },
+      "properties": {
+        "reference_flux_density_t": {
+          "value": 0.49,
+          "unit": "T",
+          "temperature": "25 degC",
+          "field_condition": "H=1200 A/m, f=10 kHz",
+          "notes": "Reference flux density, used only as a moment upper-bound surrogate."
+        },
+        "density_kg_m3": {
+          "value": 4850.0,
+          "unit": "kg/m^3",
+          "temperature": "typical",
+          "field_condition": "not applicable",
+          "notes": "Typical density."
+        },
+        "electrical_resistivity_ohm_m": {
+          "value": 10.0,
+          "unit": "ohm m",
+          "temperature": "not specified",
+          "field_condition": "not specified",
+          "notes": "Manufacturer material value."
+        },
+        "initial_permeability": {
+          "value": 2200.0,
+          "unit": "1",
+          "temperature": "25 degC",
+          "field_condition": "small-signal initial permeability",
+          "notes": "Not valid as a universal large-signal permeability."
+        },
+        "recommended_frequency_min_hz": {
+          "value": 25000.0,
+          "unit": "Hz",
+          "temperature": "manufacturer application range",
+          "field_condition": "power-transformer material",
+          "notes": "Lower edge of the published preferred range."
+        },
+        "recommended_frequency_max_hz": {
+          "value": 500000.0,
+          "unit": "Hz",
+          "temperature": "manufacturer application range",
+          "field_condition": "power-transformer material",
+          "notes": "Upper edge of the published preferred range."
+        }
+      }
+    },
+    "superpower_ap_4mm": {
+      "category": "rebco_tape",
+      "material": "REBCO on Hastelloy with copper stabilizer",
+      "grade": "SuperPower AP, 4 mm benchmark",
+      "source": {
+        "organization": "SuperPower Inc.",
+        "title": "2G HTS Wire Specification",
+        "url": "https://www.superpower-inc.com/specification.aspx",
+        "publication_date": null
+      },
+      "properties": {
+        "width_m": {
+          "value": 0.004,
+          "unit": "m",
+          "temperature": "not applicable",
+          "field_condition": "4 mm product option",
+          "notes": "Nominal tape width."
+        },
+        "substrate_thickness_m": {
+          "value": 0.00005,
+          "unit": "m",
+          "temperature": "not applicable",
+          "field_condition": "50 micrometre substrate option",
+          "notes": "Benchmark option selected for OR-2."
+        },
+        "total_copper_thickness_m": {
+          "value": 0.00004,
+          "unit": "m",
+          "temperature": "not applicable",
+          "field_condition": "40 micrometre total surround-copper example",
+          "notes": "Within the published 10-110 micrometre option range."
+        },
+        "critical_current_min_a": {
+          "value": 120.0,
+          "unit": "A",
+          "temperature": "77 K",
+          "field_condition": "self-field; AP tape; 4 mm width; 1 microvolt/cm criterion",
+          "notes": "Lower end of published 120-160 A range; no in-field extrapolation is permitted."
+        },
+        "critical_current_max_a": {
+          "value": 160.0,
+          "unit": "A",
+          "temperature": "77 K",
+          "field_condition": "self-field; AP tape; 4 mm width; 1 microvolt/cm criterion",
+          "notes": "Upper end of published range."
+        },
+        "minimum_bending_diameter_m": {
+          "value": 0.011,
+          "unit": "m",
+          "temperature": "77 K",
+          "field_condition": "50 micrometre substrate; 95% original Ic retention",
+          "notes": "Manufacturer mechanical limit."
+        }
+      }
+    },
+    "hastelloy_c276": {
+      "category": "conductor_component",
+      "material": "Ni-Cr-Mo alloy",
+      "grade": "HASTELLOY C-276",
+      "source": {
+        "organization": "Haynes International",
+        "title": "HASTELLOY C-276 alloy",
+        "url": "https://haynesintl.com/wp-content/uploads/2024/09/c-276.pdf",
+        "publication_date": "2024-09"
+      },
+      "properties": {
+        "density_kg_m3": {
+          "value": 8890.0,
+          "unit": "kg/m^3",
+          "temperature": "room temperature",
+          "field_condition": "not applicable",
+          "notes": "8.89 g/cm^3."
+        }
+      }
+    },
+    "copper_c10810": {
+      "category": "conductor",
+      "material": "oxygen-free high-conductivity copper",
+      "grade": "C10810 benchmark",
+      "source": {
+        "organization": "Copper Development Association Inc.",
+        "title": "C10810 alloy properties",
+        "url": "https://alloys.copper.org/alloy/C10810",
+        "publication_date": null
+      },
+      "properties": {
+        "density_kg_m3": {
+          "value": 8940.0,
+          "unit": "kg/m^3",
+          "temperature": "20 degC",
+          "field_condition": "not applicable",
+          "notes": "0.323 lb/in^3 rounded to SI."
+        },
+        "electrical_resistivity_ohm_m": {
+          "value": 1.71e-8,
+          "unit": "ohm m",
+          "temperature": "20 degC",
+          "field_condition": "massive fully dense copper benchmark",
+          "notes": "Traceable room-temperature benchmark, not a cryogenic value."
+        }
+      }
+    },
+    "aluminum_1050_o": {
+      "category": "conductor",
+      "material": "commercially pure aluminum",
+      "grade": "1050-O benchmark",
+      "source": {
+        "organization": "NIST Materials Data Repository",
+        "title": "Properties of Wrought Aluminum and Aluminum Alloys",
+        "url": "https://materialsdata.nist.gov/bitstream/handle/11115/179/Properties%20of%20Wrought%20Aluminum.pdf",
+        "publication_date": "2009"
+      },
+      "properties": {
+        "density_kg_m3": {
+          "value": 2705.0,
+          "unit": "kg/m^3",
+          "temperature": "20 degC",
+          "field_condition": "not applicable",
+          "notes": "1050 aluminum."
+        },
+        "electrical_resistivity_ohm_m": {
+          "value": 2.81e-8,
+          "unit": "ohm m",
+          "temperature": "20 degC",
+          "field_condition": "O temper",
+          "notes": "28.1 nOhm m."
+        }
+      }
+    },
+    "mqxf_benchmark": {
+      "category": "accelerator_magnet_benchmark",
+      "material": "Nb3Sn quadrupole system",
+      "grade": "HL-LHC MQXF nominal design",
+      "source": {
+        "organization": "CERN / US LARP",
+        "title": "Magnet design of the 150 mm aperture low-beta quadrupoles for the High Luminosity LHC",
+        "url": "https://cds.cern.ch/record/2262861/files/fermilab-pub-16-048-td.pdf?version=1",
+        "publication_date": "2017"
+      },
+      "properties": {
+        "aperture_diameter_m": {
+          "value": 0.15,
+          "unit": "m",
+          "temperature": "1.9 K operation",
+          "field_condition": "coil clear aperture",
+          "notes": "External scale benchmark only."
+        },
+        "nominal_gradient_t_m": {
+          "value": 132.6,
+          "unit": "T/m",
+          "temperature": "1.9 K operation",
+          "field_condition": "nominal quadrupole gradient",
+          "notes": "Does not establish orbital-guide mass or feasibility."
+        },
+        "peak_conductor_field_t": {
+          "value": 11.4,
+          "unit": "T",
+          "temperature": "1.9 K operation",
+          "field_condition": "nominal operating current",
+          "notes": "Peak conductor field, not aperture-edge field."
+        }
+      }
+    }
+  }
+}

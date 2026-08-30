@@ -10,6 +10,7 @@ from typing import Sequence
 from orbital_ring.analysis import evaluate_scenario
 from orbital_ring.config import load_scenario
 from orbital_ring.evidence import generate_hardening_evidence
+from orbital_ring.or2_evidence import generate_or2_evidence
 from orbital_ring.report import generate_baseline_report
 from orbital_ring.sweep import run_sweep
 
@@ -55,6 +56,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     evidence_parser.add_argument("scenario", type=Path)
     evidence_parser.add_argument("--output", type=Path, required=True)
+
+    or2_parser = subparsers.add_parser(
+        "or2-evidence", help="generate OR-2 M0/M1 magnetic feasibility evidence"
+    )
+    or2_parser.add_argument("scenario", type=Path)
+    or2_parser.add_argument("--output", type=Path, required=True)
     return parser
 
 
@@ -79,6 +86,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
     if args.command == "evidence":
         path = generate_hardening_evidence(args.scenario, args.output)
+        print(path)
+        return 0
+    if args.command == "or2-evidence":
+        path = generate_or2_evidence(args.scenario, args.output)
         print(path)
         return 0
     raise AssertionError(f"unhandled command {args.command}")
