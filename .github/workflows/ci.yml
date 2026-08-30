@@ -33,6 +33,15 @@ jobs:
       - name: Run test suite
         run: python -m pytest
 
+      # pull_request workflows normally run on GitHub's synthetic merge commit.
+      # Keep that for the test suite above, then generate evidence from the
+      # actual PR-head revision so source_commit is a durable, reproducible SHA.
+      - name: Check out exact PR head for evidence provenance
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - name: Run reference scenario
         run: orbital-ring run scenarios/reference.yaml --output ci-evidence/reference-run
 
